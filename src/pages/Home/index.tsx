@@ -1,4 +1,3 @@
-import React from "react";
 import { ToastPopUp } from "../../modules/Toast";
 
 export default function Home() {
@@ -11,7 +10,7 @@ export default function Home() {
 
   return (
     <div>
-      <button onClick={test}>click</button>Home
+      <button onClick={test}>click</button>
     </div>
   );
 }
