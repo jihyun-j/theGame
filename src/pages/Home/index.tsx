@@ -1,5 +1,17 @@
 import React from "react";
+import { ToastPopUp } from "../../modules/Toast";
 
 export default function Home() {
-  return <div>Home</div>;
+  const test = () => {
+    ToastPopUp({
+      type: "info",
+      message: "테스트 입니다,.",
+    });
+  };
+
+  return (
+    <div>
+      <button onClick={test}>click</button>Home
+    </div>
+  );
 }
