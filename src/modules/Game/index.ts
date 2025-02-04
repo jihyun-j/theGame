@@ -93,7 +93,7 @@ export class Game {
     this.gameState = newGameState;
   }
 
-  dropCard(card: number, boardIdx: number) {
+  private dropCard(card: number, boardIdx: number) {
     const curPlayer = this.curPlayer;
     const { board, players } = this.gameState;
     const newBoard = [...board];
@@ -113,7 +113,7 @@ export class Game {
     };
   }
 
-  drawCard() {
+  private drawCard() {
     const { dummy, players } = this.gameState;
 
     const [card, newDummy] = popDummy(dummy);
