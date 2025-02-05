@@ -3,6 +3,7 @@ import { supabase } from "../api/supabase";
 import { ToastPopUp } from "../modules/Toast";
 import Login from "../components/auth";
 import { useAuthStore } from "../store/store";
+import { useLocation } from "react-router-dom";
 
 interface AuthProviderType {
   user: User | null;
@@ -35,6 +36,9 @@ export default function AuthProvider({ children }: Props) {
     logout: userSessionClear,
     isLogined,
   } = useAuthStore();
+
+  const { pathname } = useLocation();
+  console.log(pathname);
 
   const [userInput, setUserInput] = useState<Partial<User>>({
     nickname: "",
@@ -101,7 +105,7 @@ export default function AuthProvider({ children }: Props) {
   return (
     <AuthContext.Provider
       value={{ user, userInput, handleUserInput, signUp, login, logout }}>
-      {isLogined ? children : <Login />}
+      {isLogined || pathname === "/Test" ? children : <Login />}
     </AuthContext.Provider>
   );
 }
