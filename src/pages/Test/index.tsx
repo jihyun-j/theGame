@@ -1,5 +1,11 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { curPlayer, initGame, play, turnEnd } from "../../modules/Game";
+import {
+  canTurnEnd,
+  curPlayer,
+  initGame,
+  play,
+  turnEnd,
+} from "../../modules/Game";
 import { GameState } from "../../types/types";
 const useInput = (): [string, (e: ChangeEvent<HTMLInputElement>) => void] => {
   const [value, setValue] = useState<string>("");
@@ -76,7 +82,9 @@ const Test = () => {
       </div>
       <div style={{ display: "flex", gap: "35px" }}>
         <button onClick={handlePlay}>제출</button>
-        <button onClick={handleTurnEnd}>턴넘기기</button>
+        <button onClick={handleTurnEnd} disabled={!canTurnEnd(game)}>
+          턴넘기기
+        </button>
       </div>
     </div>
   );

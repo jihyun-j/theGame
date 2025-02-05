@@ -81,7 +81,19 @@ export function canDrop(
   boardIdx: number,
 ): boolean {
   const board = state.board;
-  return boardIdx < 2 ? board[boardIdx] < card : board[boardIdx] > card;
+  const boardCard = board[boardIdx];
+  const SPECIAL_DIFF = 10;
+
+  const ascendCard = boardCard < card;
+  const descendCard = boardCard > card;
+
+  const ascendCard10 = boardCard - SPECIAL_DIFF === card;
+  const descendCard10 = boardCard + SPECIAL_DIFF === card;
+
+  if (boardIdx < 2) {
+    return ascendCard || ascendCard10;
+  }
+  return descendCard || descendCard10;
 }
 
 export function dropCard(
