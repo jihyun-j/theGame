@@ -16,6 +16,8 @@ export type GameState = {
   dummy: number[];
   players: Player[];
   curPlayerIdx: number;
+  curPlayerTimes: number;
+  state: "win" | "lose" | "pending";
 };
 
 export type Chat = {
