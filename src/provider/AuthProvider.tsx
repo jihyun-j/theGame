@@ -8,7 +8,7 @@ interface AuthProviderType {
   user: User | null;
   signUp: () => Promise<unknown>;
   login: () => Promise<unknown>;
-  userInput: User;
+  userInput: Partial<User>;
   handleUserInput: (type: keyof User, value: string) => void;
   logout: () => void;
 }
@@ -16,6 +16,7 @@ interface AuthProviderType {
 const AuthContext = createContext<AuthProviderType | undefined>(undefined);
 
 type User = {
+  id: string | null;
   nickname: string;
   password: string;
   room?: number | null;
@@ -29,13 +30,13 @@ type Props = {
 export default function AuthProvider({ children }: Props) {
   const {
     user,
-    login: handleLoginState,
     setUser,
+    login: handleLoginState,
     logout: userSessionClear,
     isLogined,
   } = useAuthStore();
 
-  const [userInput, setUserInput] = useState<User>({
+  const [userInput, setUserInput] = useState<Partial<User>>({
     nickname: "",
     password: "",
   });
@@ -70,8 +71,8 @@ export default function AuthProvider({ children }: Props) {
         .eq("password", userInput.password);
 
       if (data) {
-        const { nickname, password, room } = data[0] as User;
-        setUser({ nickname, password, room });
+        const { nickname, password, room, id } = data[0] as User;
+        setUser({ id, nickname, password, room });
         handleLoginState();
         ToastPopUp({
           type: "success",

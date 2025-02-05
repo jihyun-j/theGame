@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 type UserInfo = {
+  id: string | null;
   nickname: string;
   room: number | null | undefined;
   password: string;
@@ -9,7 +10,12 @@ type UserInfo = {
 
 type AuthStore = {
   isLogined: boolean;
-  user: { nickname: string; password: string; room: number | null };
+  user: {
+    id: string | null;
+    nickname: string;
+    password: string;
+    room: number | null;
+  };
   setUser: (data: UserInfo) => void;
   logout: () => void;
   login: () => void;
@@ -19,10 +25,11 @@ export const useAuthStore = create(
   persist<AuthStore>(
     (set) => ({
       isLogined: false,
-      user: { nickname: "", password: "", room: null },
+      user: { id: null, nickname: "", password: "", room: null },
       setUser: (data: UserInfo) =>
         set({
           user: {
+            id: data.id,
             nickname: data.nickname,
             password: "",
             room: data.room || null,
@@ -32,7 +39,7 @@ export const useAuthStore = create(
       logout: () =>
         set({
           isLogined: false,
-          user: { nickname: "", password: "", room: null },
+          user: { id: null, nickname: "", password: "", room: null },
         }),
     }),
     {
@@ -40,3 +47,18 @@ export const useAuthStore = create(
     }
   )
 );
+
+type GlobalModalStore = {
+  isOpened: boolean;
+  setModal: (component: JSX.Element) => void;
+  closeModal: () => void;
+  component: JSX.Element | null;
+};
+
+export const useSetGlobalModal = create<GlobalModalStore>((set) => ({
+  isOpened: false,
+  setModal: (component: JSX.Element) =>
+    set({ component: component, isOpened: true }),
+  closeModal: () => set({ component: null, isOpened: false }),
+  component: null,
+}));

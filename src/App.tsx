@@ -5,11 +5,14 @@ import Home from "./pages/Home";
 import Test from "./pages/Test";
 import AuthProvider from "./provider/AuthProvider";
 import Header from "./components/header";
+import GlobalModal from "./components/GlobalModal/GlobalModal";
+
 function App() {
   return (
     <BrowserRouter>
-      <Toast />
       <AuthProvider>
+        <Toast />
+        <GlobalModal />
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />

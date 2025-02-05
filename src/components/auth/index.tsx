@@ -5,7 +5,7 @@ export default function Login() {
   const { handleUserInput, userInput, signUp, login } = useAuth();
 
   return (
-    <div className="w-full min-h-screen bg-amber-400 flex flex-col justify-center items-center">
+    <div className="w-dvw min-h-screen bg-amber-400 flex flex-col justify-center items-center">
       <form
         onSubmit={(e) => e.preventDefault()}
         className="w-full max-w-[24rem] border-2 border-amber-600 h-[15rem] rounded-[1rem] bg-[#ebebeb90] flex flex-col items-center justify-center gap-4">
