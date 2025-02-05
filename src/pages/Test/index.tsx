@@ -1,11 +1,12 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import {
   canTurnEnd,
-  curPlayer,
+  getCurPlayer,
   initGame,
   play,
   turnEnd,
 } from "../../modules/Game";
+import { ToastPopUp } from "../../modules/Toast";
 import { GameState } from "../../types/types";
 const useInput = (): [string, (e: ChangeEvent<HTMLInputElement>) => void] => {
   const [value, setValue] = useState<string>("");
@@ -23,14 +24,22 @@ const Test = () => {
   }));
   const [game, setGame] = useState<GameState>(initGame(players));
 
-  const currentPlayer = curPlayer(game);
+  const currentPlayer = getCurPlayer(game);
   const [dropCard, handleDropCard] = useInput();
   const [dropBoardIdx, handleDropIdx] = useInput();
 
   const handlePlay = () => {
     if (!dropCard || !dropBoardIdx) return;
 
-    setGame(play(game, Number(dropCard), Number(dropBoardIdx)));
+    try {
+      setGame(play(game, Number(dropCard), Number(dropBoardIdx)));
+    } catch (err: unknown) {
+      const error = err as Error;
+      ToastPopUp({
+        type: "error",
+        message: error.message,
+      });
+    }
   };
 
   const handleTurnEnd = () => {
