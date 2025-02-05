@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { supabase } from "../api/supabase";
 import Login from "../components/auth";
 import { ToastPopUp } from "../modules/Toast";
 import { useAuthStore } from "../store/store";
-import { useLocation } from "react-router-dom";
 
 interface AuthProviderType {
   user: User | null;
@@ -104,7 +104,7 @@ export default function AuthProvider({ children }: Props) {
   // authProvider에서 제외되는 페이지인가 확인
   // pages 배열 안에 경로를 추가해주세욥
   const getExceptAuthPage = () => {
-    const pages = ["/Test"];
+    const pages = ["/test"];
     return pages.some((path) => path === pathname);
   };
 
