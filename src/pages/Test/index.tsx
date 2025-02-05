@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { curPlayer, initGame, play, turnEnd } from "../../modules/Game";
 import { GameState } from "../../types/types";
 const useInput = (): [string, (e: ChangeEvent<HTMLInputElement>) => void] => {
@@ -30,6 +30,10 @@ const Test = () => {
   const handleTurnEnd = () => {
     setGame(turnEnd(game));
   };
+
+  useEffect(() => {
+    console.log(game);
+  }, [game]);
 
   return (
     <div>

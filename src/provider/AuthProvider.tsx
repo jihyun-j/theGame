@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { supabase } from "../api/supabase";
-import { ToastPopUp } from "../modules/Toast";
 import Login from "../components/auth";
+import { ToastPopUp } from "../modules/Toast";
 import { useAuthStore } from "../store/store";
 
 interface AuthProviderType {

@@ -96,7 +96,12 @@ export function dropCard(
   );
   const newBoard = [...state.board];
   newBoard[boardIdx] = card;
-  return { ...state, board: newBoard, players: newPlayers };
+  return {
+    ...state,
+    board: newBoard,
+    players: newPlayers,
+    curPlayerTimes: state.curPlayerTimes + 1,
+  };
 }
 
 export function drawCard(state: GameState): GameState {
@@ -130,7 +135,7 @@ export function play(
 
 export function turnEnd(state: GameState): GameState {
   if (!canTurnEnd(state)) {
-    return { ...state, curPlayerTimes: state.curPlayerTimes + 1 };
+    return { ...state };
   }
   return {
     ...state,
