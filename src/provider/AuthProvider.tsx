@@ -3,6 +3,7 @@ import { supabase } from "../api/supabase";
 import Login from "../components/auth";
 import { ToastPopUp } from "../modules/Toast";
 import { useAuthStore } from "../store/store";
+import { useLocation } from "react-router-dom";
 
 interface AuthProviderType {
   user: User | null;
@@ -35,6 +36,8 @@ export default function AuthProvider({ children }: Props) {
     logout: userSessionClear,
     isLogined,
   } = useAuthStore();
+
+  const { pathname } = useLocation();
 
   const [userInput, setUserInput] = useState<Partial<User>>({
     nickname: "",
@@ -98,10 +101,17 @@ export default function AuthProvider({ children }: Props) {
     });
   };
 
+  // authProvider에서 제외되는 페이지인가 확인
+  // pages 배열 안에 경로를 추가해주세욥
+  const getExceptAuthPage = () => {
+    const pages = ["/Test"];
+    return pages.some((path) => path === pathname);
+  };
+
   return (
     <AuthContext.Provider
       value={{ user, userInput, handleUserInput, signUp, login, logout }}>
-      {isLogined ? children : <Login />}
+      {isLogined || getExceptAuthPage() ? children : <Login />}
     </AuthContext.Provider>
   );
 }
