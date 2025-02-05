@@ -38,7 +38,6 @@ export default function AuthProvider({ children }: Props) {
   } = useAuthStore();
 
   const { pathname } = useLocation();
-  console.log(pathname);
 
   const [userInput, setUserInput] = useState<Partial<User>>({
     nickname: "",
@@ -102,10 +101,17 @@ export default function AuthProvider({ children }: Props) {
     });
   };
 
+  // authProvider에서 제외되는 페이지인가 확인
+  // pages 배열 안에 경로를 추가해주세욥
+  const getExceptAuthPage = () => {
+    const pages = ["/Test"];
+    return pages.some((path) => path === pathname);
+  };
+
   return (
     <AuthContext.Provider
       value={{ user, userInput, handleUserInput, signUp, login, logout }}>
-      {isLogined || pathname === "/Test" ? children : <Login />}
+      {isLogined || getExceptAuthPage() ? children : <Login />}
     </AuthContext.Provider>
   );
 }
