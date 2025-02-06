@@ -6,6 +6,7 @@ import Test from "./pages/Test";
 import AuthProvider from "./provider/AuthProvider";
 import Header from "./components/header";
 import GlobalModal from "./components/GlobalModal/GlobalModal";
+import Game from "./pages/Game";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/game/:id" element={<Game />} />
           <Route path="/test" element={<Test />} />
         </Routes>
       </AuthProvider>
