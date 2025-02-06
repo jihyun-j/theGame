@@ -2,7 +2,7 @@ import React from "react";
 import { useAuth } from "../../provider/AuthProvider";
 
 export default function Login() {
-  const { handleUserInput, userInput, signUp, login } = useAuth();
+  const { handleUserInput, signUp, login } = useAuth();
 
   return (
     <div className="w-dvw min-h-screen bg-amber-400 flex flex-col justify-center items-center">
@@ -16,6 +16,7 @@ export default function Login() {
             닉네임:
           </label>
           <input
+            required
             type="text"
             id="nickname"
             className="bg-[#fff] rounded-[.4rem] px-2"
@@ -30,6 +31,7 @@ export default function Login() {
             비밀번호:
           </label>
           <input
+            required
             type="password"
             id="password"
             className="bg-[#fff] rounded-[.4rem] px-2"
@@ -39,20 +41,22 @@ export default function Login() {
             }}
           />
         </div>
-        <p className="text-[.8rem] ">
+        {/* <p className="text-[.8rem] ">
           계정이 있다면 비밀번호만 입력해도 로그인 됩니다.
-        </p>
-        <button
-          className="w-full text-black max-w-[18rem] rounded-[.2rem] bg-amber-100 py-1 hover:bg-amber-700 hover:text-amber-50 cursor-pointer"
-          onClick={() => {
-            if (userInput.nickname) {
-              return signUp();
-            } else {
-              return login();
-            }
-          }}>
-          {userInput.nickname ? "회원가입" : "로그인"}
-        </button>
+        </p> */}
+        <div className="flex items-center gap-1.5 w-full px-10">
+          <button
+            className="w-full px-1 text-black max-w-[18rem] rounded-[.2rem] bg-amber-100 py-1 hover:bg-amber-700 hover:text-amber-50 cursor-pointer"
+            onClick={login}>
+            로그인
+          </button>
+
+          <button
+            className="w-full whitespace-nowrap text-black max-w-[25rem] px-1 rounded-[.2rem] bg-amber-100 py-1 hover:bg-slate-700 hover:text-amber-50 cursor-pointer"
+            onClick={signUp}>
+            회원가입
+          </button>
+        </div>
       </form>
     </div>
   );
