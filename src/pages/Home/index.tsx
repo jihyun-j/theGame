@@ -1,10 +1,18 @@
 import CreateRoomForm from "../../components/creatRoomForm/CreateRoomForm";
 import { useSetGlobalModal } from "../../store/store";
 import useHome from "../../hooks/Home/useHome";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const { setModal } = useSetGlobalModal();
   const { data: roomList } = useHome();
+
+  // 지현추가 시작
+  const navigate = useNavigate();
+
+  const enterRoomHandler = (roomId: number) => {
+    navigate(`game/${roomId}`);
+  };
 
   return (
     <div className="relative ">
@@ -37,6 +45,15 @@ export default function Home() {
                     room?.startAt.split("T")[1]
                   ).slice(0, 8)}`}
                 </td>
+                {/* 지현추가 시작*/}
+                <td className="border-1 border-y-slate-600 text-center py-1">
+                  <button
+                    className="cursor-pointer bg-blue-500 text-white px-2 py-1 rounded-sm"
+                    onClick={() => enterRoomHandler(room.id)}>
+                    입장
+                  </button>
+                </td>
+                {/* 지현추가 끝*/}
               </tr>
             );
           })}
