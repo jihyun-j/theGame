@@ -1,15 +1,16 @@
 import { useState } from "react";
 
 interface ChatInputProps {
-  sendMessage: (text: string) => void;
+  sendMessage: (text: string, userId: string) => void;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({ sendMessage }) => {
   const [text, setText] = useState<string>("");
+  const userId = "b257aec3-d2b3-4093-b9b2-4f8d8b128c2b";
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    sendMessage(text);
+    sendMessage(text, userId);
     setText("");
   };
 
