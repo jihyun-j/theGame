@@ -15,8 +15,6 @@ interface Chats {
 const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
   const [messages, setMessages] = useState<Chats[]>([]);
 
-  console.log(messages);
-
   // 방에 입장 했을 때, 메세지 가져오기
   const fetchMessage = async () => {
     const { data, error } = await supabase
@@ -57,7 +55,27 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
 
   useEffect(() => {
     fetchMessage();
-  }, []);
+
+    const subscription = supabase
+      .channel(`game-room-${roomId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "rooms",
+          filter: `id=eq.${roomId}`,
+        },
+        (payload) => {
+          setMessages(payload.new.chats || []);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, [roomId]);
 
   return (
     <div className="grid grid-rows-3 w-3xs h-96 m-4 border rounded-sm p-3">
