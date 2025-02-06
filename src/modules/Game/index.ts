@@ -48,16 +48,16 @@ function drawCards(dummy: number[], count: number): [number[], number[]] {
   return [cards, currentDummy];
 }
 
-export function curPlayer(state: GameState): Player {
+export function getCurPlayer(state: GameState): Player {
   return state.players[state.curPlayerIdx];
 }
 
-export function playerCount(state: GameState): number {
+export function getPlayerCount(state: GameState): number {
   return state.players.length;
 }
 
 export function isEnd(state: GameState): boolean {
-  const player = curPlayer(state);
+  const player = getCurPlayer(state);
   const board = state.board;
   return !player.cards.some(
     (card) =>
@@ -75,13 +75,28 @@ export function isFinish(state: GameState): boolean {
   return state.players.every((player) => player.cards.length === 0);
 }
 
-export function canDrop(
-  state: GameState,
-  card: number,
-  boardIdx: number,
-): boolean {
+export function canDrop(state: GameState, card: number, boardIdx: number) {
   const board = state.board;
-  return boardIdx < 2 ? board[boardIdx] < card : board[boardIdx] > card;
+  const boardCard = board[boardIdx];
+  const player = getCurPlayer(state);
+  if (player.cards.indexOf(card) === -1)
+    return "해당 카드가 존재하지 않습니다.";
+  const SPECIAL_DIFF = 10;
+
+  const ascendCard = boardCard < card;
+  const descendCard = boardCard > card;
+
+  const ascendCard10 = boardCard - SPECIAL_DIFF === card;
+  const descendCard10 = boardCard + SPECIAL_DIFF === card;
+
+  if (boardIdx < 2) {
+    return ascendCard || ascendCard10
+      ? null
+      : "해당 카드를 내려놓을 수 없습니다.";
+  }
+  return descendCard || descendCard10
+    ? null
+    : "해당 카드를 내려놓을 수 없습니다.";
 }
 
 export function dropCard(
@@ -89,20 +104,25 @@ export function dropCard(
   card: number,
   boardIdx: number,
 ): GameState {
-  const player = curPlayer(state);
+  const player = getCurPlayer(state);
   const newCards = player.cards.filter((c) => c !== card);
   const newPlayers = state.players.map((p) =>
     p.nickname === player.nickname ? { ...p, cards: newCards } : p,
   );
   const newBoard = [...state.board];
   newBoard[boardIdx] = card;
-  return { ...state, board: newBoard, players: newPlayers };
+  return {
+    ...state,
+    board: newBoard,
+    players: newPlayers,
+    curPlayerTimes: state.curPlayerTimes + 1,
+  };
 }
 
 export function drawCard(state: GameState): GameState {
   const [card, newDummy] = popDummy(state.dummy);
   if (card === null) return state;
-  const player = curPlayer(state);
+  const player = getCurPlayer(state);
   const newPlayers = state.players.map((p) =>
     p.nickname === player.nickname ? { ...p, cards: [...p.cards, card] } : p,
   );
@@ -114,9 +134,8 @@ export function play(
   card: number,
   boardIdx: number,
 ): GameState {
-  if (!canDrop(state, card, boardIdx)) {
-    throw new Error("drop-error");
-  }
+  const err = canDrop(state, card, boardIdx);
+  if (err) throw new Error(err);
   if (isEnd(state)) {
     return { ...state, state: "lose" };
   }
@@ -130,11 +149,11 @@ export function play(
 
 export function turnEnd(state: GameState): GameState {
   if (!canTurnEnd(state)) {
-    return { ...state, curPlayerTimes: state.curPlayerTimes + 1 };
+    return { ...state };
   }
   return {
     ...state,
-    curPlayerIdx: (state.curPlayerIdx + 1) % playerCount(state),
+    curPlayerIdx: (state.curPlayerIdx + 1) % getPlayerCount(state),
     curPlayerTimes: 0,
   };
 }
