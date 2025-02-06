@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ToastPopUp } from "../../modules/Toast";
 import { supabase } from "../../api/supabase";
 
-type Room = {
+export type Room = {
   id: number;
   roomTitle: string;
   gameStatue: object;

@@ -50,46 +50,80 @@ export default function AuthProvider({ children }: Props) {
 
   const signUp = async () => {
     const { nickname, password } = userInput;
-    try {
-      await supabase.from("users").insert([{ nickname, password }]).select();
 
-      ToastPopUp({
-        type: "success",
-        message: "회원가입 성공",
+    if (!nickname || !password) return;
+
+    // 계정 조회 - 같은 닉네임이 있나 확인
+    const { data: duplicateName } = await supabase
+      .from("users")
+      .select("*")
+      .eq("nickname", nickname);
+
+    // 같은 닉네임 존재하면 막음
+    if (duplicateName && duplicateName.length > 0) {
+      return ToastPopUp({
+        type: "error",
+        message: "계정이 이미 존재합니다",
       });
-    } catch (error) {
-      ToastPopUp({
+    }
+
+    // 생성 시도
+    const { error: createUserError } = await supabase
+      .from("users")
+      .insert([{ nickname, password }])
+      .select();
+
+    // 생성 에러 처리
+    if (createUserError) {
+      return ToastPopUp({
         type: "error",
         message: `백엔드 잘못입니다.`,
       });
-      return error;
     }
+
+    // 생성 성공
+    ToastPopUp({
+      type: "success",
+      message: "회원가입 성공",
+    });
   };
 
   const login = async () => {
-    try {
-      const { data } = await supabase
-        .from("users")
-        .select("*")
-        .eq("password", userInput.password);
+    const { nickname, password } = userInput;
 
-      if (data) {
-        const { nickname, password, room, id } = data[0] as User;
-        setUser({ id, nickname, password, room });
-        handleLoginState();
-        ToastPopUp({
-          type: "success",
-          message: "로그인 성공",
-        });
+    if (!nickname || !password) return;
 
-        return data;
-      }
-    } catch (error) {
-      ToastPopUp({
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("password", password)
+      .eq("nickname", nickname);
+
+    if (error) {
+      return ToastPopUp({
         type: "error",
         message: "로그인 실패",
       });
-      return error;
+    }
+
+    if (data && data.length === 0) {
+      return ToastPopUp({
+        type: "error",
+        message: "닉네임, 비밀번호를 확인해주세요",
+      });
+    }
+
+    if (data && data.length === 1) {
+      const { nickname, password, room, id } = data[0] as User;
+      setUser({ id, nickname, password, room });
+      handleLoginState();
+      ToastPopUp({
+        type: "success",
+        message: "로그인 성공",
+      });
+      setUserInput({ nickname: "", password: "" });
+
+      return data;
     }
   };
 

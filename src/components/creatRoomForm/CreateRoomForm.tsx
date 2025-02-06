@@ -4,12 +4,15 @@ import { supabase } from "../../api/supabase";
 import { ToastPopUp } from "../../modules/Toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSetGlobalModal } from "../../store/store";
+import { useNavigate } from "react-router-dom";
+import { Room } from "../../hooks/Home/useHome";
 
 type RoomInfo = {
   roomTitle: string;
 };
 
 export default function CreateRoomForm() {
+  const navi = useNavigate();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { closeModal } = useSetGlobalModal();
@@ -22,7 +25,21 @@ export default function CreateRoomForm() {
   };
 
   const createRoom = async () => {
-    const { error } = await supabase
+    const { data } = await supabase.from("rooms").select("*");
+    const isParticipants = data?.some((room) =>
+      room.participant.includes(user?.id)
+    );
+
+    // 로그인 유저가 이미 만든 방이 존재한다면 생성 X
+    if (isParticipants) {
+      return ToastPopUp({
+        type: "error",
+        message: "방은 한 개만 만들 수 있어요",
+      });
+    }
+
+    // 에러 발생 시 생성 X
+    const { data: createdRoom, error } = await supabase
       .from("rooms")
       .insert([{ roomTitle: roomInfo.roomTitle, participant: [user?.id] }])
       .select();
@@ -38,6 +55,11 @@ export default function CreateRoomForm() {
       type: "success",
       message: "게임 생성 완료",
     });
+
+    const { id: roomId } = createdRoom[0] as Room;
+    // 방 생성 완료되면 해당 룸으로 리다이렉트
+    navi(`/game/${roomId}`);
+
     queryClient.invalidateQueries({ queryKey: ["home", "get-room-list"] });
     closeModal();
   };

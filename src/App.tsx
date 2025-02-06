@@ -11,9 +11,9 @@ import Game from "./pages/Game";
 function App() {
   return (
     <BrowserRouter>
+      <Toast />
+      <GlobalModal />
       <AuthProvider>
-        <Toast />
-        <GlobalModal />
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
