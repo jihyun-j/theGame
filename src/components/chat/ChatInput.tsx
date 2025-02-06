@@ -1,17 +1,23 @@
 import { useState } from "react";
+import { useAuth } from "../../provider/AuthProvider";
+import { ToastPopUp } from "../../modules/Toast";
 
 interface ChatInputProps {
   sendMessage: (text: string, userId: string) => void;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({ sendMessage }) => {
+  const { user } = useAuth();
   const [text, setText] = useState<string>("");
-  const userId = "b257aec3-d2b3-4093-b9b2-4f8d8b128c2b";
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    sendMessage(text, userId);
-    setText("");
+    if (!user?.id)
+      return ToastPopUp({ type: "error", message: "유저 정보가 없습니다." });
+    else {
+      sendMessage(text, user?.id);
+      setText("");
+    }
   };
 
   return (
