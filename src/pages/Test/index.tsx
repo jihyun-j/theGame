@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   canTurnEnd,
   getCurPlayer,
@@ -8,14 +8,6 @@ import {
 } from "../../modules/Game";
 import { ToastPopUp } from "../../modules/Toast";
 import { GameState } from "../../types/types";
-const useInput = (): [string, (e: ChangeEvent<HTMLInputElement>) => void] => {
-  const [value, setValue] = useState<string>("");
-  const handler = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-  };
-
-  return [value, handler];
-};
 
 const Test = () => {
   const players = Array.from({ length: 5 }, (_, i) => ({
@@ -25,11 +17,11 @@ const Test = () => {
   const [game, setGame] = useState<GameState>(initGame(players));
 
   const currentPlayer = getCurPlayer(game);
-  const [dropCard, handleDropCard] = useInput();
-  const [dropBoardIdx, handleDropIdx] = useInput();
+  const [dropCard, setDropCard] = useState(-1);
+  const [dropBoardIdx, setDropIdx] = useState(-1);
 
   const handlePlay = () => {
-    if (!dropCard || !dropBoardIdx) return;
+    if (dropCard === -1 || dropBoardIdx === -1) return;
 
     try {
       setGame(play(game, Number(dropCard), Number(dropBoardIdx)));
@@ -46,6 +38,18 @@ const Test = () => {
     setGame(turnEnd(game));
   };
 
+  const handleDropCard = (card: number) => {
+    return () => {
+      setDropCard(card);
+    };
+  };
+
+  const handleDropIdx = (idx: number) => {
+    return () => {
+      setDropIdx(idx);
+    };
+  };
+
   useEffect(() => {
     console.log(game);
   }, [game]);
@@ -55,9 +59,14 @@ const Test = () => {
       <div>
         <h2>카드 목록</h2>
         <h2>player name: {currentPlayer.nickname}</h2>
-        <ul>
+        <ul style={{ display: "flex", gap: 30 }}>
           {currentPlayer.cards.map((v) => (
-            <li key={`card-${v}`}>{v}</li>
+            <li
+              onClick={handleDropCard(v)}
+              style={{ width: 25, height: 25, border: "1px solid black" }}
+              key={`card-${v}`}>
+              {v}
+            </li>
           ))}
         </ul>
       </div>
@@ -69,9 +78,14 @@ const Test = () => {
         }}></div>
       <div>
         <h2>보드 게임 카드 목록</h2>
-        <ul>
+        <ul style={{ display: "flex", gap: 30 }}>
           {game.board.map((v, i) => (
-            <li key={`board-${v + i}`}>{v}</li>
+            <li
+              onClick={handleDropIdx(i)}
+              style={{ width: 25, height: 25, border: "1px solid black" }}
+              key={`board-${v + i}`}>
+              {v}
+            </li>
           ))}
         </ul>
       </div>
@@ -82,12 +96,10 @@ const Test = () => {
           backgroundColor: "black",
         }}></div>
       <div>
-        <p>낼 카드 번호</p>
-        <input value={dropCard} onChange={handleDropCard} />
+        <p>낼 카드 번호 {dropCard}</p>
       </div>
       <div>
-        <p>낼 보드</p>
-        <input value={dropBoardIdx} onChange={handleDropIdx} />
+        <p>낼 보드 {dropBoardIdx}</p>
       </div>
       <div style={{ display: "flex", gap: "35px" }}>
         <button onClick={handlePlay}>제출</button>

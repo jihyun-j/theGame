@@ -58,10 +58,9 @@ export function getPlayerCount(state: GameState): number {
 
 export function isEnd(state: GameState): boolean {
   const player = getCurPlayer(state);
-  const board = state.board;
-  return !player.cards.some(
-    (card) =>
-      board[0] < card || board[1] < card || board[2] > card || board[3] > card,
+
+  return !player.cards.some((card) =>
+    [0, 1, 2, 3].some((boardIdx) => canDrop(state, card, boardIdx) === null),
   );
 }
 
@@ -136,12 +135,15 @@ export function play(
 ): GameState {
   const err = canDrop(state, card, boardIdx);
   if (err) throw new Error(err);
+
   if (isEnd(state)) {
     return { ...state, state: "lose" };
   }
+
   if (isFinish(state)) {
     return { ...state, state: "win" };
   }
+
   const stateAfterDrop = dropCard(state, card, boardIdx);
   const stateAfterDraw = drawCard(stateAfterDrop);
   return stateAfterDraw;

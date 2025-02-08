@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import ChatInput from "./ChatInput";
 import { supabase } from "../../api/supabase";
+import ChatInput from "./ChatInput";
 
 interface ChatboxProps {
   roomId: number;
@@ -68,7 +68,7 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
         },
         (payload) => {
           setMessages(payload.new.chats || []);
-        }
+        },
       )
       .subscribe();
 
@@ -78,9 +78,9 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
   }, [roomId]);
 
   return (
-    <div className="grid grid-rows-3 w-3xs h-96 m-4 border rounded-sm p-3">
+    <div className='grid grid-rows-3 w-3xs h-96 m-4 border rounded-sm p-3'>
       <p>Room Name</p>
-      <div className="overflow-scroll">
+      <div className='overflow-scroll'>
         {messages.map((message, index) => (
           <p key={index}>{message.messages}</p>
         ))}
