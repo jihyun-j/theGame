@@ -15,6 +15,7 @@ export function createInitialState(): GameState {
 export function initGame(players: Player[]): GameState {
   const dummy = initDummy();
   const playerCnt = players.length;
+  if (playerCnt === 0) throw new Error("player not exists");
   const cardCountPerPlayer = playerCnt >= 3 ? 6 : playerCnt >= 2 ? 7 : 8;
 
   let currentDummy = dummy;
