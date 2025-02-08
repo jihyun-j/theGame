@@ -12,11 +12,12 @@ const useRoom = (roomId: string) => {
       .single();
 
     if (error) throw error;
+    if (!data || !data.participant || data.participant.length === 0) return [];
 
     const { data: nicknames, error: getNicknameError } = await supabase
       .from("users")
       .select("nickname")
-      .in("nickname", data);
+      .in("nickname", data.participant);
 
     if (getNicknameError) throw getNicknameError;
 

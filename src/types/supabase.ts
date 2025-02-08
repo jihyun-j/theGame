@@ -39,6 +39,9 @@ export type Database = {
           chats: Json | null;
           gameState: Json | null;
           id: number;
+          participant: string[] | null;
+          roomTitle: string;
+          share_uuid: string;
           startAt: string | null;
           updatedAt: string;
         };
@@ -46,6 +49,9 @@ export type Database = {
           chats?: Json | null;
           gameState?: Json | null;
           id?: number;
+          participant?: string[] | null;
+          roomTitle?: string;
+          share_uuid?: string;
           startAt?: string | null;
           updatedAt?: string;
         };
@@ -53,6 +59,9 @@ export type Database = {
           chats?: Json | null;
           gameState?: Json | null;
           id?: number;
+          participant?: string[] | null;
+          roomTitle?: string;
+          share_uuid?: string;
           startAt?: string | null;
           updatedAt?: string;
         };
@@ -60,16 +69,19 @@ export type Database = {
       };
       users: {
         Row: {
+          id: string;
           nickname: string;
           password: string;
           room: number | null;
         };
         Insert: {
+          id?: string;
           nickname: string;
           password: string;
           room?: number | null;
         };
         Update: {
+          id?: string;
           nickname?: string;
           password?: string;
           room?: number | null;
