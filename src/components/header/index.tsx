@@ -1,6 +1,10 @@
 import React from "react";
 import { useAuth } from "../../provider/AuthProvider";
 
+/**
+ * 임시 헤더입니당
+ * @returns
+ */
 export default function Header() {
   const { logout } = useAuth();
   return (
