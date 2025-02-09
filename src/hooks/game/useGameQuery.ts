@@ -13,8 +13,9 @@ const useGameQuery = (roomId: number) => {
     const { data, error } = await supabase
       .from("rooms")
       .select("gameState")
-      .eq("room", roomId)
+      .eq("id", roomId)
       .single();
+
     if (error) throw error;
 
     const gameState = data;
@@ -30,7 +31,11 @@ const useGameQuery = (roomId: number) => {
     if (error) throw error;
   };
 
-  const { data: gameState, isLoading } = useQuery<GameState>({
+  const {
+    data: gameState,
+    isLoading,
+    error: getGameStateError,
+  } = useQuery<GameState>({
     queryKey: [GAME_KEY],
     queryFn: fetchGameState,
   });
@@ -40,7 +45,7 @@ const useGameQuery = (roomId: number) => {
     mutationKey: [GAME_KEY],
   });
 
-  return { gameState, isLoading, updateGameState };
+  return { gameState, isLoading, updateGameState, getGameStateError };
 };
 
 export default useGameQuery;

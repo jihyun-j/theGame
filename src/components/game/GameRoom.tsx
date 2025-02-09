@@ -26,9 +26,9 @@ const GameRoom = () => {
     <div>
       <div>
         <h2>카드 목록</h2>
-        <h2>player name: {currentPlayer.nickname}</h2>
+        <h2>player name: {currentPlayer?.nickname}</h2>
         <ul style={{ display: "flex", gap: 30 }}>
-          {currentPlayer.cards.map((v) => (
+          {currentPlayer?.cards.map((v) => (
             <li
               onClick={handleDropCard(v)}
               style={{ width: 25, height: 25, border: "1px solid black" }}

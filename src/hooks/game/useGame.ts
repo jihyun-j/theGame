@@ -1,5 +1,8 @@
+import { PostgrestError } from "@supabase/supabase-js";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getCurPlayer, initGame, play, turnEnd } from "../../modules/Game";
+import { getError } from "../../modules/Game/error";
 import { ToastPopUp } from "../../modules/Toast";
 import useGameQuery from "./useGameQuery";
 import useRoom from "./useRoom";
@@ -8,10 +11,19 @@ const useGame = (roomId: number) => {
   const [dropCard, setDropCard] = useState(-1);
   const [dropBoardIdx, setDropIdx] = useState(-1);
 
-  const { gameState, updateGameState, isLoading } = useGameQuery(roomId);
-  const { participantNicknames } = useRoom(roomId);
+  const { gameState, updateGameState, isLoading, getGameStateError } =
+    useGameQuery(roomId);
 
-  const currentPlayer = getCurPlayer(gameState!);
+  const { participantNicknames } = useRoom(roomId);
+  const navigate = useNavigate();
+
+  if (getGameStateError) {
+    const errMessage = getError(getGameStateError as PostgrestError);
+    ToastPopUp({ type: "error", message: errMessage });
+    navigate("/");
+  }
+
+  const currentPlayer = gameState ? getCurPlayer(gameState!) : null;
 
   const handlePlay = () => {
     if (dropCard === -1 || dropBoardIdx === -1) return;
