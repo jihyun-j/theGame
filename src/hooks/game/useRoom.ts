@@ -3,12 +3,12 @@ import { supabase } from "../../api/supabase";
 
 export const ROOM_KEY = "room";
 
-const useRoom = (roomId: string) => {
+const useRoom = (roomId: number) => {
   const fetchRoomParticipant = async () => {
     const { data, error } = await supabase
       .from("rooms")
       .select("participant")
-      .eq("id", Number(roomId))
+      .eq("id", roomId)
       .single();
 
     if (error) throw error;
@@ -25,7 +25,7 @@ const useRoom = (roomId: string) => {
   };
 
   const { data: participantNicknames } = useQuery({
-    queryKey: [roomId],
+    queryKey: [ROOM_KEY],
     queryFn: fetchRoomParticipant,
   });
 

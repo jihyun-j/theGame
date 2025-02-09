@@ -1,65 +1,26 @@
-import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useGame } from "../../hooks/game/useGame";
-import useRoom from "../../hooks/game/useRoom";
-import {
-  canTurnEnd,
-  getCurPlayer,
-  initGame,
-  play,
-  turnEnd,
-} from "../../modules/Game";
-import { ToastPopUp } from "../../modules/Toast";
+import useGame from "../../hooks/game/useGame";
+import { canTurnEnd } from "../../modules/Game";
 
 const GameRoom = () => {
   const { id } = useParams();
-  const { gameState, updateGameState, isLoading } = useGame(id!);
-  const [dropCard, setDropCard] = useState(-1);
-  const [dropBoardIdx, setDropIdx] = useState(-1);
-  const { participantNicknames } = useRoom(id!);
 
-  if (isLoading) return <div>Loading</div>;
+  const {
+    currentPlayer,
+    gameState,
+    isLoading,
+    dropBoardIdx,
+    dropCard,
+    handleDropCard,
+    handleDropIdx,
+    handlePlay,
+    handleStartGame,
+    handleTurnEnd,
+  } = useGame(Number(id!));
 
-  const currentPlayer = getCurPlayer(gameState!);
-
-  const handlePlay = () => {
-    if (dropCard === -1 || dropBoardIdx === -1) return;
-
-    try {
-      updateGameState(play(gameState!, Number(dropCard), Number(dropBoardIdx)));
-    } catch (err: unknown) {
-      const error = err as Error;
-      ToastPopUp({
-        type: "error",
-        message: error.message,
-      });
-    }
-  };
-
-  const handleTurnEnd = () => {
-    updateGameState(turnEnd(gameState!));
-  };
-
-  const handleDropCard = (card: number) => {
-    return () => {
-      setDropCard(card);
-    };
-  };
-
-  const handleDropIdx = (idx: number) => {
-    return () => {
-      setDropIdx(idx);
-    };
-  };
-
-  const handleStartGame = () => {
-    updateGameState(
-      initGame(
-        participantNicknames?.map((nickname) => ({ nickname, cards: [] })) ||
-          [],
-      ),
-    );
-  };
+  if (isLoading) {
+    return <div>Loading</div>;
+  }
 
   return (
     <div>
