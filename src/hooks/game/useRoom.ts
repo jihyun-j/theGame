@@ -17,7 +17,7 @@ const useRoom = (roomId: number) => {
     const { data: nicknames, error: getNicknameError } = await supabase
       .from("users")
       .select("nickname")
-      .in("nickname", data.participant);
+      .in("id", data.participant);
 
     if (getNicknameError) throw getNicknameError;
 
