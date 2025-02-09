@@ -1,13 +1,15 @@
 import { PostgrestError } from "@supabase/supabase-js";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getCurPlayer, initGame, play, turnEnd } from "../../modules/Game";
 import { getError } from "../../modules/Game/error";
 import { ToastPopUp } from "../../modules/Toast";
 import useGameQuery from "./useGameQuery";
 import useRoom from "./useRoom";
 
-const useGame = (roomId: number) => {
+const useGame = () => {
+  const { id } = useParams();
+  const roomId = Number(id!);
   const [dropCard, setDropCard] = useState(-1);
   const [dropBoardIdx, setDropIdx] = useState(-1);
 

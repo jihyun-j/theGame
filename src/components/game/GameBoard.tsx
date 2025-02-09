@@ -1,9 +1,7 @@
-import { useParams } from "react-router-dom";
 import useGame from "../../hooks/game/useGame";
 import { canTurnEnd } from "../../modules/Game";
 
 const GameBoard = () => {
-  const { id } = useParams();
   const {
     currentPlayer,
     gameState,
@@ -14,7 +12,7 @@ const GameBoard = () => {
     handlePlay,
     handleStartGame,
     handleTurnEnd,
-  } = useGame(Number(id!));
+  } = useGame();
 
   return (
     <>

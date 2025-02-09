@@ -1,9 +1,7 @@
-import { useParams } from "react-router-dom";
 import useGame from "../../hooks/game/useGame";
 
 const GameButtonWrapper = () => {
-  const { id } = useParams();
-  const { gameState, handleStartGame } = useGame(Number(id));
+  const { gameState, handleStartGame } = useGame();
 
   const showStartBtn = gameState === null;
 
