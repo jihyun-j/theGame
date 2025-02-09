@@ -18,7 +18,7 @@ const useGameQuery = (roomId: number) => {
 
     if (error) throw error;
 
-    const gameState = data;
+    const gameState = data.gameState;
 
     return _.isString(gameState) ? JSON.parse(gameState) : gameState;
   };
