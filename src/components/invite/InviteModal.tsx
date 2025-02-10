@@ -10,7 +10,7 @@ export default function InviteRoomModal({ roomId }: { roomId?: number }) {
   const navi = useNavigate();
   const { closeModal } = useSetGlobalModal();
   const [shareCode, setShareCode] = useState<string>("");
-  const { updateRoom } = useRoomMutate();
+  const { handleEnter } = useRoomMutate();
   const { user } = useAuth();
 
   const handleRoomInfoChange = (value: string) => {
@@ -46,39 +46,22 @@ export default function InviteRoomModal({ roomId }: { roomId?: number }) {
       });
     }
 
-    if (data) {
+    if (data && user) {
       ToastPopUp({
         type: "success",
         message: "게임에 입장했습니다.",
       });
-      const curUser = user!;
-      const nextParticipant = [...(data?.participant || []), curUser.id!];
-      const currentChats = Array.isArray(data.chats)
-        ? (data.chats as string[])
-        : [];
-      const newMessage = `${curUser.nickname}님이 입장하였습니다.`; // 사용자 닉네임 사용
-      const updatedChats = [
-        ...currentChats,
-        { who: curUser.id, msg: newMessage },
-      ];
-
-      updateRoom(
-        {
-          roomId: data.id,
-          updateRoom: { participant: nextParticipant, chats: updatedChats },
+      handleEnter(data, user, {
+        onSuccess: () => {
+          navi(`/game/${data?.id}`);
         },
-        {
-          onSuccess: () => {
-            navi(`/game/${data?.id}`);
-          },
-          onSettled: () => {
-            closeModal();
-          },
-          onError: (err) => {
-            ToastPopUp({ type: "error", message: err.message });
-          },
+        onSettled: () => {
+          closeModal();
         },
-      );
+        onError: (err) => {
+          ToastPopUp({ type: "error", message: err.message });
+        },
+      });
     }
   };
 

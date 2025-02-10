@@ -16,8 +16,8 @@ interface AuthProviderType {
 
 const AuthContext = createContext<AuthProviderType | undefined>(undefined);
 
-type User = {
-  id: string | null;
+export type User = {
+  id: string;
   nickname: string;
   password: string;
   room?: number | null;
