@@ -60,6 +60,7 @@ export default function InviteRoomModal({ roomId }: { roomId?: number }) {
       });
       const curUser = user!;
       const nextParticipant = [...(data?.participant || []), curUser.id!];
+
       // 여기서 성공하게 되면 navi를 가게 하고 싶은데
       updateRoom(
         {
