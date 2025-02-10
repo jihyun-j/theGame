@@ -27,6 +27,13 @@ export default function InviteRoomModal() {
       });
     }
 
+    if (data && data[0]?.startAt !== null) {
+      return ToastPopUp({
+        type: "info",
+        message: "게임이 진행 중인 방에 입장할 수 없습니다.",
+      });
+    }
+
     if (data && Number(data[0]?.participant?.length) > 5) {
       return ToastPopUp({
         type: "info",
