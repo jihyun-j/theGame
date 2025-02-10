@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import _ from "lodash";
 import { supabase } from "../../api/supabase";
 import { GameState } from "../../types/types";
@@ -9,6 +9,7 @@ const GAME_KEY = "game";
   game state를 확인하기 위해 tanstack query 함수들을 모와둔 hook
  */
 const useGameQuery = (roomId: number) => {
+  const queryClient = useQueryClient();
   const fetchGameState = async () => {
     const { data, error } = await supabase
       .from("rooms")
@@ -26,9 +27,12 @@ const useGameQuery = (roomId: number) => {
   const updateGameStateWithSupabase = async (gameState: GameState) => {
     const { error } = await supabase
       .from("rooms")
-      .update({ gameState: JSON.stringify(gameState) });
+      .update({ gameState: JSON.stringify(gameState) })
+      .eq("id", roomId);
 
     if (error) throw error;
+
+    queryClient.invalidateQueries({ queryKey: [GAME_KEY] });
   };
 
   const {

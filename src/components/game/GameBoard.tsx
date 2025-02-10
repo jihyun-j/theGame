@@ -1,5 +1,4 @@
 import useGame from "../../hooks/game/useGame";
-import { canTurnEnd } from "../../modules/Game";
 
 const GameBoard = () => {
   const {
@@ -9,9 +8,6 @@ const GameBoard = () => {
     dropCard,
     handleDropCard,
     handleDropIdx,
-    handlePlay,
-    handleStartGame,
-    handleTurnEnd,
   } = useGame();
 
   return (
@@ -61,13 +57,7 @@ const GameBoard = () => {
       <div>
         <p>낼 보드 {dropBoardIdx}</p>
       </div>
-      <div style={{ display: "flex", gap: "35px" }}>
-        <button onClick={handlePlay}>제출</button>
-        <button onClick={handleTurnEnd} disabled={!canTurnEnd(gameState!)}>
-          턴넘기기
-        </button>
-        {!gameState && <button onClick={handleStartGame}>게임시작</button>}
-      </div>
+      <div style={{ display: "flex", gap: "35px" }}></div>
     </>
   );
 };

@@ -4,6 +4,8 @@ import { supabase } from "../../api/supabase";
 export const ROOM_KEY = "room";
 
 const useRoom = (roomId: number) => {
+  // TODO : fetch Room
+  // TODO : refactor room participant(room fetch된 거에 따로 붙이기)
   const fetchRoomParticipant = async () => {
     const { data, error } = await supabase
       .from("rooms")
@@ -17,7 +19,7 @@ const useRoom = (roomId: number) => {
     const { data: nicknames, error: getNicknameError } = await supabase
       .from("users")
       .select("nickname")
-      .in("nickname", data.participant);
+      .in("id", data.participant);
 
     if (getNicknameError) throw getNicknameError;
 

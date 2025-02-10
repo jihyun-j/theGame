@@ -27,7 +27,7 @@ const useGame = () => {
 
   const currentPlayer = gameState ? getCurPlayer(gameState!) : null;
 
-  const handlePlay = () => {
+  const handlePlay = (dropCard: number, dropBoardIdx: number) => {
     if (dropCard === -1 || dropBoardIdx === -1) return;
 
     try {

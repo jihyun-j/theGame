@@ -43,7 +43,7 @@ export type Database = {
           roomTitle: string;
           share_uuid: string;
           startAt: string | null;
-          updatedAt: string;
+          updated_at: string;
         };
         Insert: {
           chats?: Json | null;
