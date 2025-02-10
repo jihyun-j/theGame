@@ -1,19 +1,14 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase";
 import ChatInput from "./ChatInput";
+import { Chat } from "../../types/types";
 
 interface ChatboxProps {
   roomId: number;
 }
 
-interface Chats {
-  userId: string;
-  messages: string;
-  createdAt: Date;
-}
-
 const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
-  const [messages, setMessages] = useState<Chats[]>([]);
+  const [messages, setMessages] = useState<Chat[]>([]);
 
   // 방에 입장 했을 때, 메세지 가져오기
   const fetchMessage = async () => {
@@ -24,7 +19,7 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
       .single();
 
     if (!error && data.chats) {
-      setMessages(data.chats);
+      setMessages((data.chats as Chat[]) || []);
     }
   };
 
@@ -34,9 +29,9 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
 
     // 새로운 메세지
     const newMessage = {
-      userId: userId,
-      messages: text,
-      createdAt: new Date(),
+      who: userId,
+      msg: text,
+      createdAt: new Date().toISOString(),
     };
 
     const { data } = await supabase
@@ -45,7 +40,11 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
       .eq("id", roomId)
       .single();
 
-    const updatedChats = [...(data?.chats || []), newMessage];
+    const prevChats: Chat[] = Array.isArray(data?.chats)
+      ? (data?.chats as Chat[])
+      : [];
+
+    const updatedChats: Chat[] = [...prevChats, newMessage];
 
     await supabase
       .from("rooms")
@@ -68,7 +67,7 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
         },
         (payload) => {
           setMessages(payload.new.chats || []);
-        },
+        }
       )
       .subscribe();
 
@@ -78,11 +77,11 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
   }, [roomId]);
 
   return (
-    <div className='grid grid-rows-3 w-3xs h-96 m-4 border rounded-sm p-3'>
+    <div className="grid grid-rows-3 w-3xs h-96 m-4 border rounded-sm p-3">
       <p>Room Name</p>
-      <div className='overflow-scroll'>
+      <div className="overflow-scroll">
         {messages.map((message, index) => (
-          <p key={index}>{message.messages}</p>
+          <p key={index}>{message.msg}</p>
         ))}
       </div>
       <div>
