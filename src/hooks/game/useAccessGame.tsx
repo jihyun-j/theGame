@@ -1,7 +1,8 @@
-import { MouseEvent } from "react";
-import { supabase } from "../../api/supabase";
-import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { MouseEvent } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { supabase } from "../../api/supabase";
+import { getNextChat } from "../../modules/Chat/chat";
 import { ToastPopUp } from "../../modules/Toast";
 import { useAuth } from "../../provider/AuthProvider";
 
@@ -14,7 +15,8 @@ export default function useAccessGame() {
     const { data: roomInfo } = await supabase
       .from("rooms")
       .select("*")
-      .eq("id", Number(id));
+      .eq("id", Number(id))
+      .single();
 
     return roomInfo;
   };
@@ -54,11 +56,15 @@ export default function useAccessGame() {
   const exitRoom = async () => {
     if (data) {
       const newParticipants: string[] =
-        data[0]?.participant?.filter((userId) => userId !== user?.id) || [];
+        data?.participant?.filter((userId) => userId !== user?.id) || [];
+      const nextChat = getNextChat(data?.chats, {
+        who: user?.id || "",
+        msg: `${user?.nickname}이 퇴장하였습니다`,
+      });
 
       await supabase
         .from("rooms")
-        .update({ participant: newParticipants })
+        .update({ participant: newParticipants, chats: nextChat })
         .eq("id", Number(id))
         .select();
     }
