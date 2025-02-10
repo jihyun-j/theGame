@@ -2,6 +2,7 @@ import CreateRoomForm from "../../components/creatRoomForm/CreateRoomForm";
 import { useSetGlobalModal } from "../../store/store";
 import useHome from "../../hooks/Home/useHome";
 import { useNavigate } from "react-router-dom";
+import InviteRoomModal from "../../components/invite/InviteModal";
 
 export default function Home() {
   const { setModal } = useSetGlobalModal();
@@ -9,10 +10,6 @@ export default function Home() {
 
   // 지현추가 시작
   const navigate = useNavigate();
-
-  const enterRoomHandler = (roomId: number) => {
-    navigate(`game/${roomId}`);
-  };
 
   return (
     <div className="relative ">
@@ -38,7 +35,7 @@ export default function Home() {
                   {room?.roomTitle}
                 </td>
                 <td className="border-1 border-y-slate-600 text-center py-1">
-                  {room?.participants?.length || 0} 명
+                  {room?.participant?.length || 0} 명
                 </td>
                 <td className="border-1 border-y-slate-600 text-center py-1">
                   {`${room?.startAt.split("T")[0]} - ${String(
@@ -49,7 +46,9 @@ export default function Home() {
                 <td className="border-1 border-y-slate-600 text-center py-1">
                   <button
                     className="cursor-pointer bg-blue-500 text-white px-2 py-1 rounded-sm"
-                    onClick={() => enterRoomHandler(room.id)}>
+                    onClick={() => {
+                      setModal(<InviteRoomModal />);
+                    }}>
                     입장
                   </button>
                 </td>
@@ -65,6 +64,13 @@ export default function Home() {
         }}
         className="min-w-[9rem] py-1 rounded-[.6rem] bg-amber-500 text-slate-50 cursor-pointer hover:bg-amber-700 hover:text-amber-300 fixed bottom-3.5 left-3.5">
         방 만들기
+      </button>
+      <button
+        onClick={() => {
+          setModal(<InviteRoomModal />);
+        }}
+        className="min-w-[9rem] py-1 rounded-[.6rem] bg-amber-500 text-slate-50 cursor-pointer hover:bg-amber-700 hover:text-amber-300 fixed bottom-3.5 left-45">
+        초대코드 입력
       </button>
     </div>
   );
