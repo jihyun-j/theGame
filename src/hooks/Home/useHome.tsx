@@ -5,11 +5,13 @@ import { supabase } from "../../api/supabase";
 export type Room = {
   id: number;
   roomTitle: string;
-  gameStatue: object;
-  updatedAt: string;
+  gameState: object;
   chats: object[];
   startAt: string;
-  participants: string[];
+  participant: string[];
+  share_uuid: string;
+  master: string;
+  updated_at: string;
 };
 
 export default function useHome() {
