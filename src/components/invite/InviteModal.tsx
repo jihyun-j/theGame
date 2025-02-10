@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
-import useHome from "../../hooks/Home/useHome";
+import useRoomMutate from "../../hooks/game/useRoomMutate";
 import { ToastPopUp } from "../../modules/Toast";
 import { useAuth } from "../../provider/AuthProvider";
 import { useSetGlobalModal } from "../../store/store";
@@ -10,7 +10,7 @@ export default function InviteRoomModal({ roomId }: { roomId?: number }) {
   const navi = useNavigate();
   const { closeModal } = useSetGlobalModal();
   const [shareCode, setShareCode] = useState<string>("");
-  const { updateRoom } = useHome();
+  const { updateRoom } = useRoomMutate();
   const { user } = useAuth();
 
   const handleRoomInfoChange = (value: string) => {
