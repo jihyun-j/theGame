@@ -27,7 +27,7 @@ const useGame = () => {
 
   const currentPlayer = gameState ? getCurPlayer(gameState!) : null;
 
-  const handlePlay = () => {
+  const handlePlay = (dropCard: number, dropBoardIdx: number) => {
     if (dropCard === -1 || dropBoardIdx === -1) return;
 
     try {
@@ -58,9 +58,6 @@ const useGame = () => {
   };
 
   const handleStartGame = () => {
-    // TODO
-    // 1. 방장만 할 수 있어야 함
-
     updateGameState(
       initGame(
         participantNicknames?.map((nickname) => ({ nickname, cards: [] })) ||

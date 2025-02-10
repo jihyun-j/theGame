@@ -4,7 +4,8 @@ import { supabase } from "../../api/supabase";
 export const ROOM_KEY = "room";
 
 const useRoom = (roomId: number) => {
-  // TODO: 내가 참여한 사람인지 아닌지 확인하고 그에 따른 처리를 해야 함
+  // TODO : fetch Room
+  // TODO : refactor room participant(room fetch된 거에 따로 붙이기)
   const fetchRoomParticipant = async () => {
     const { data, error } = await supabase
       .from("rooms")
