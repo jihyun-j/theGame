@@ -53,11 +53,19 @@ export default function InviteRoomModal({ roomId }: { roomId?: number }) {
       });
       const curUser = user!;
       const nextParticipant = [...(data?.participant || []), curUser.id!];
-      // 여기서 성공하게 되면 navi를 가게 하고 싶은데
+      const currentChats = Array.isArray(data.chats)
+        ? (data.chats as string[])
+        : [];
+      const newMessage = `${curUser.nickname}님이 입장하였습니다.`; // 사용자 닉네임 사용
+      const updatedChats = [
+        ...currentChats,
+        { who: curUser.id, msg: newMessage },
+      ];
+
       updateRoom(
         {
           roomId: data.id,
-          updateRoom: { participant: nextParticipant },
+          updateRoom: { participant: nextParticipant, chats: updatedChats },
         },
         {
           onSuccess: () => {
