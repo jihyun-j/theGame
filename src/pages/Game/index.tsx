@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import ChatBox from "../../components/chat/ChatBox";
+import GameParticipantList from "../../components/game/GameParticipants";
 import GameRoom from "../../components/game/GameRoom";
 import { ToastPopUp } from "../../modules/Toast";
 
@@ -16,6 +17,7 @@ export default function Game() {
     <div>
       <ChatBox roomId={Number(id)} />
       <GameRoom />
+      <GameParticipantList />
     </div>
   );
 }
