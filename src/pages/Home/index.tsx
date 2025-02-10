@@ -47,7 +47,7 @@ export default function Home() {
                   <button
                     className='cursor-pointer bg-blue-500 text-white px-2 py-1 rounded-sm'
                     onClick={() => {
-                      setModal(<InviteRoomModal />);
+                      setModal(<InviteRoomModal roomId={room.id} />);
                     }}>
                     입장
                   </button>
