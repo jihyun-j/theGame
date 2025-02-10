@@ -1,40 +1,45 @@
 import React, { useState } from "react";
-import { supabase } from "../../api/supabase";
-import { ToastPopUp } from "../../modules/Toast";
-import { useSetGlobalModal } from "../../store/store";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../../api/supabase";
+import useHome from "../../hooks/Home/useHome";
+import { ToastPopUp } from "../../modules/Toast";
+import { useAuth } from "../../provider/AuthProvider";
+import { useSetGlobalModal } from "../../store/store";
 
 export default function InviteRoomModal() {
   const navi = useNavigate();
   const { closeModal } = useSetGlobalModal();
   const [shareCode, setShareCode] = useState<string>("");
+  const { updateRoom } = useHome();
+  const { user } = useAuth();
 
   const handleRoomInfoChange = (value: string) => {
     setShareCode(value);
   };
 
   const findAndEnter = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("rooms")
       .select("*")
-      .eq("share_uuid", shareCode);
+      .eq("share_uuid", shareCode)
+      .single();
 
     // 방이 존재하지 않을 때
-    if (data?.length === 0) {
+    if (error) {
       return ToastPopUp({
         type: "info",
         message: "방이 존재하지 않습니다.",
       });
     }
 
-    if (data && data[0]?.startAt !== null) {
+    if (data && data.startAt !== null) {
       return ToastPopUp({
         type: "info",
         message: "게임이 진행 중인 방에 입장할 수 없습니다.",
       });
     }
 
-    if (data && Number(data[0]?.participant?.length) > 5) {
+    if (data && Number(data?.participant?.length) > 5) {
       return ToastPopUp({
         type: "info",
         message: "정원이 초과했습니다.",
@@ -46,8 +51,26 @@ export default function InviteRoomModal() {
         type: "success",
         message: "게임에 입장했습니다.",
       });
-      navi(`/game/${data[0]?.id}`);
-      closeModal();
+      const curUser = user!;
+      const nextParticipant = [...(data?.participant || []), curUser.id!];
+      // 여기서 성공하게 되면 navi를 가게 하고 싶은데
+      updateRoom(
+        {
+          roomId: data.id,
+          updateRoom: { participant: nextParticipant },
+        },
+        {
+          onSuccess: () => {
+            navi(`/game/${data?.id}`);
+          },
+          onSettled: () => {
+            closeModal();
+          },
+          onError: (err) => {
+            ToastPopUp({ type: "error", message: err.message });
+          },
+        }
+      );
     }
   };
 
