@@ -1,20 +1,23 @@
-import { MouseEvent } from "react";
-import { supabase } from "../../api/supabase";
-import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { MouseEvent } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { supabase } from "../../api/supabase";
 import { ToastPopUp } from "../../modules/Toast";
 import { useAuth } from "../../provider/AuthProvider";
+import useRoomMutate from "./useRoomMutate";
 
 export default function useAccessGame() {
   const { id } = useParams();
   const { user } = useAuth();
+  const { handleExit } = useRoomMutate();
   const navi = useNavigate();
 
   const getRoom = async () => {
     const { data: roomInfo } = await supabase
       .from("rooms")
       .select("*")
-      .eq("id", Number(id));
+      .eq("id", Number(id))
+      .single();
 
     return roomInfo;
   };
@@ -52,18 +55,13 @@ export default function useAccessGame() {
 
   // 퇴장하기
   const exitRoom = async () => {
-    if (data) {
-      const newParticipants: string[] =
-        data[0]?.participant?.filter((userId) => userId !== user?.id) || [];
-
-      await supabase
-        .from("rooms")
-        .update({ participant: newParticipants })
-        .eq("id", Number(id))
-        .select();
+    if (data && user) {
+      handleExit(data, user, {
+        onSuccess: () => {
+          navi("/");
+        },
+      });
     }
-
-    navi("/");
   };
 
   return { handleShare, exitRoom, data };

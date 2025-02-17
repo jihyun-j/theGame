@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 type UserInfo = {
-  id: string | null;
+  id: string;
   nickname: string;
   room: number | null | undefined;
   password: string;
@@ -11,7 +11,7 @@ type UserInfo = {
 type AuthStore = {
   isLogined: boolean;
   user: {
-    id: string | null;
+    id: string;
     nickname: string;
     password: string;
     room: number | null;
@@ -25,7 +25,7 @@ export const useAuthStore = create(
   persist<AuthStore>(
     (set) => ({
       isLogined: false,
-      user: { id: null, nickname: "", password: "", room: null },
+      user: { id: "", nickname: "", password: "", room: null },
       setUser: (data: UserInfo) =>
         set({
           user: {
@@ -39,13 +39,13 @@ export const useAuthStore = create(
       logout: () =>
         set({
           isLogined: false,
-          user: { id: null, nickname: "", password: "", room: null },
+          user: { id: "", nickname: "", password: "", room: null },
         }),
     }),
     {
       name: "userStorage",
-    }
-  )
+    },
+  ),
 );
 
 type GlobalModalStore = {

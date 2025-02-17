@@ -18,7 +18,7 @@ export default function Game() {
   return (
     <div>
       <button
-        id={room ? String(room[0]?.share_uuid) : ""}
+        id={room ? String(room?.share_uuid) : ""}
         onClick={handleShare}
         className="w-[12rem] py-1 rounded-[.6rem] bg-amber-300 cursor-pointer">
         공유하기

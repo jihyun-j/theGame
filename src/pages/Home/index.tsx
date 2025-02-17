@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import CreateRoomForm from "../../components/creatRoomForm/CreateRoomForm";
 import InviteRoomModal from "../../components/invite/InviteModal";
 import useHome from "../../hooks/Home/useHome";
@@ -7,9 +6,6 @@ import { useSetGlobalModal } from "../../store/store";
 export default function Home() {
   const { setModal } = useSetGlobalModal();
   const { data: roomList } = useHome();
-
-  // 지현추가 시작
-  const navigate = useNavigate();
 
   return (
     <div className="relative ">

@@ -23,6 +23,13 @@ interface AuthProviderType {
 
 const AuthContext = createContext<AuthProviderType | undefined>(undefined);
 
+export type User = {
+  id: string;
+  nickname: string;
+  password: string;
+  room?: number | null;
+};
+
 type Props = {
   children: React.ReactNode;
 };

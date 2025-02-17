@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
-import useHome from "../../hooks/Home/useHome";
+import useRoomMutate from "../../hooks/game/useRoomMutate";
 import { ToastPopUp } from "../../modules/Toast";
 import { useAuth } from "../../provider/AuthProvider";
 import { useSetGlobalModal } from "../../store/store";
@@ -10,7 +10,7 @@ export default function InviteRoomModal({ roomId }: { roomId?: number }) {
   const navi = useNavigate();
   const { closeModal } = useSetGlobalModal();
   const [shareCode, setShareCode] = useState<string>("");
-  const { updateRoom } = useHome();
+  const { handleEnter } = useRoomMutate();
   const { user } = useAuth();
 
   const handleRoomInfoChange = (value: string) => {
@@ -53,32 +53,22 @@ export default function InviteRoomModal({ roomId }: { roomId?: number }) {
       });
     }
 
-    if (data) {
+    if (data && user) {
       ToastPopUp({
         type: "success",
         message: "게임에 입장했습니다.",
       });
-      const curUser = user!;
-      const nextParticipant = [...(data?.participant || []), curUser.id!];
-
-      // 여기서 성공하게 되면 navi를 가게 하고 싶은데
-      updateRoom(
-        {
-          roomId: data.id,
-          updateRoom: { participant: nextParticipant },
+      handleEnter(data, user, {
+        onSuccess: () => {
+          navi(`/game/${data?.id}`);
         },
-        {
-          onSuccess: () => {
-            navi(`/game/${data?.id}`);
-          },
-          onSettled: () => {
-            closeModal();
-          },
-          onError: (err) => {
-            ToastPopUp({ type: "error", message: err.message });
-          },
-        }
-      );
+        onSettled: () => {
+          closeModal();
+        },
+        onError: (err) => {
+          ToastPopUp({ type: "error", message: err.message });
+        },
+      });
     }
   };
 
