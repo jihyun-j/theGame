@@ -96,14 +96,23 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
     };
   }, [roomId]);
 
+  const formattedTime = (time: string) => {
+    return new Date(time).toLocaleTimeString("kr-KR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
   return (
     <div className="bg-gray-400 flex flex-col w-3xs h-96 m-4 border rounded-sm p-3">
       <p className="border-2">Messages</p>
-      <div className="overflow-scroll border-2">
+      <div className="overflow-scroll border-2 flex-1">
         {messages.map((message, index) => (
-          <div>
-            <span className="text-amber-500">{usersMap[message.who]}</span>
-            <span className="text-blue-800">{message.createdAt}</span>
+          <div className="text-sm my-2 ">
+            <div className="font-semibold">
+              <span className="mr-2">{formattedTime(message.createdAt)}</span>
+              <span>{usersMap[message.who]} </span>
+            </div>
             <p key={index}>{message.msg}</p>
           </div>
         ))}
