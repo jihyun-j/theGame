@@ -13,7 +13,7 @@ const useGame = () => {
   const [dropCard, setDropCard] = useState(-1);
   const [dropBoardIdx, setDropIdx] = useState(-1);
 
-  const { room } = useRoom();
+  const { room, updateRoom } = useRoom();
   const navigate = useNavigate();
   const { gameState, updateGameState, isLoading, getGameStateError } =
     useGameQuery(roomId);
@@ -28,8 +28,9 @@ const useGame = () => {
 
   const currentPlayer = gameState ? getCurPlayer(gameState!) : null;
 
-  const handlePlay = (dropCard: number, dropBoardIdx: number) => {
+  const handlePlay = () => {
     if (dropCard === -1 || dropBoardIdx === -1) return;
+    console.log("handle play", dropCard, dropBoardIdx);
 
     try {
       updateGameState(play(gameState!, Number(dropCard), Number(dropBoardIdx)));
@@ -62,6 +63,7 @@ const useGame = () => {
     updateGameState(
       initGame(participants?.map((nickname) => ({ nickname, cards: [] })) || [])
     );
+    updateRoom({ startAt: new Date().toISOString() });
   };
 
   return {

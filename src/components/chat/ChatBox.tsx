@@ -12,7 +12,7 @@ interface ChatboxProps {
 
 const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
   const navi = useNavigate();
-  const { room } = useRoom();
+  const { room, updateRoom } = useRoom();
   const messages = room?.chats as Chat[];
 
   const [isRoomDeleted, setIsRoomDeleted] = useState<boolean>(false);
@@ -39,10 +39,7 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
 
     const updatedChats = getNextChat(prevChats, newMessage);
 
-    await supabase
-      .from("rooms")
-      .update({ chats: updatedChats })
-      .eq("id", roomId);
+    updateRoom({ chats: updatedChats });
   };
 
   useEffect(() => {
@@ -58,6 +55,15 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
         },
         () => {
           setIsRoomDeleted(true);
+          updateRoom({
+            chats: [
+              {
+                who: "봇",
+                msg: "방폭됩니다.",
+                createdAt: new Date().toISOString(),
+              },
+            ],
+          });
         }
       )
       .subscribe();
@@ -66,19 +72,6 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
   //TODO : 방장 퇴장 시 ChatBox에 방폭 알림 띄우기
   useEffect(() => {
     if (isRoomDeleted) {
-      supabase
-        .from("rooms")
-        .update({
-          chats: [
-            {
-              who: "봇",
-              msg: "방폭됩니다.",
-              createdAt: new Date().toISOString(),
-            },
-          ],
-        })
-        .eq("id", roomId);
-
       setTimeout(() => {
         navi("/");
       }, 3000);
