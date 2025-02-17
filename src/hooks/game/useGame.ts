@@ -60,9 +60,8 @@ const useGame = () => {
   const handleStartGame = () => {
     updateGameState(
       initGame(
-        participantNicknames?.map((nickname) => ({ nickname, cards: [] })) ||
-          [],
-      ),
+        participantNicknames?.map((nickname) => ({ nickname, cards: [] })) || []
+      )
     );
   };
 

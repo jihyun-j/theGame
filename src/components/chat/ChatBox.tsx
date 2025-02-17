@@ -3,6 +3,8 @@ import { supabase } from "../../api/supabase";
 import { getNextChat } from "../../modules/Chat/chat";
 import { Chat } from "../../types/types";
 import ChatInput from "./ChatInput";
+import { useNavigate, useParams } from "react-router-dom";
+import { ToastPopUp } from "../../modules/Toast";
 
 interface ChatboxProps {
   roomId: number;
@@ -66,8 +68,8 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
           filter: `id=eq.${roomId}`,
         },
         (payload) => {
-          setMessages(payload.new.chats || []);
-        },
+          setMessages([payload.new.chats || []]);
+        }
       )
       .subscribe();
 
@@ -76,10 +78,55 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
     };
   }, [roomId]);
 
+  const navi = useNavigate();
+
+  const [isRoomDeleted, setIsRoomDeleted] = useState<boolean>(false);
+
+  const { id } = useParams();
+
+  useEffect(() => {
+    supabase
+      .channel(`game-room-${id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "rooms",
+          filter: `id=eq.${id}`,
+        },
+        () => {
+          setIsRoomDeleted(true);
+          setMessages([
+            {
+              who: "봇",
+              msg: `방장이 퇴장하여
+              3초 뒤 로비로 이동합니다.`,
+              createdAt: new Date().toISOString(),
+            },
+          ]);
+        }
+      )
+      .subscribe();
+  });
+
+  useEffect(() => {
+    if (isRoomDeleted) {
+      ToastPopUp({
+        type: "action",
+        message: "방장이 퇴장하여 3초 후 방이 사라집니다.",
+      });
+
+      setTimeout(() => {
+        navi("/");
+      }, 3000);
+    }
+  }, [isRoomDeleted]);
+
   return (
-    <div className='grid grid-rows-3 w-3xs h-96 m-4 border rounded-sm p-3'>
+    <div className="grid grid-rows-3 w-3xs h-96 m-4 border rounded-sm p-3">
       <p>Room Name</p>
-      <div className='overflow-scroll'>
+      <div className="overflow-scroll">
         {messages.map((message, index) => (
           <p key={index}>{message.msg}</p>
         ))}

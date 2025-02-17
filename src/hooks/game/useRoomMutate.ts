@@ -1,8 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "../../api/supabase";
 import { getNextChat } from "../../modules/Chat/chat";
-import { User } from "../../provider/AuthProvider";
 import { Database } from "../../types/supabase";
+import { User } from "../../types/types";
+import { ToastPopUp } from "../../modules/Toast";
 
 export type MutationHandler = {
   onSuccess?: () => void;
@@ -31,34 +32,50 @@ const useRoomMutate = () => {
     mutationFn: updateRoomWithSupabase,
   });
 
-  const handleExit = (
+  const handleExit = async (
     room: Database["public"]["Tables"]["rooms"]["Row"],
     user: User,
-    mutationHandler: MutationHandler,
+    mutationHandler: MutationHandler
   ) => {
     const newParticipants: string[] =
-      room.participant?.filter((userId) => userId !== user?.id) || [];
+      room.participant?.filter((nickName) => nickName !== user?.nickname) || [];
     const nextChat = getNextChat(room.chats, {
       who: user?.id || "",
       msg: `${user?.nickname}이 퇴장하였습니다`,
     });
 
-    updateRoom(
-      {
-        roomId: room.id,
-        updateRoom: { participant: newParticipants, chats: nextChat },
-      },
-      mutationHandler,
-    );
+    // 방의 master가 현재 userId와 같다면 방폭
+    if (user.id === room?.master) {
+      const { error } = await supabase
+        .from("rooms")
+        .delete()
+        .eq("master", user.id);
+
+      if (!error) {
+        ToastPopUp({
+          type: "info",
+          message: "방을 삭제합니다...",
+        });
+        return mutationHandler;
+      }
+    } else {
+      updateRoom(
+        {
+          roomId: room.id,
+          updateRoom: { participant: newParticipants, chats: nextChat },
+        },
+        mutationHandler
+      );
+    }
   };
 
   const handleEnter = (
     room: Database["public"]["Tables"]["rooms"]["Row"],
     user: User,
-    mutationHandler: MutationHandler,
+    mutationHandler: MutationHandler
   ) => {
     const curUser = user!;
-    const nextParticipant = [...(room?.participant || []), curUser.id!];
+    const nextParticipant = [...(room?.participant || []), curUser.nickname!];
     const currentChats = Array.isArray(room.chats)
       ? (room.chats as string[])
       : [];
@@ -73,7 +90,7 @@ const useRoomMutate = () => {
         roomId: room.id,
         updateRoom: { participant: nextParticipant, chats: updatedChats },
       },
-      mutationHandler,
+      mutationHandler
     );
   };
 

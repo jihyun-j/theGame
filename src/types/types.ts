@@ -1,6 +1,8 @@
 export type User = {
+  id: string;
   nickname: string;
-  room?: number;
+  password: string;
+  room?: number | null;
 };
 
 export type Room = {
@@ -9,6 +11,7 @@ export type Room = {
   updatedAt: string;
   startAt?: string;
   chats?: Chat[];
+  master?: string;
 };
 
 export type GameState = {

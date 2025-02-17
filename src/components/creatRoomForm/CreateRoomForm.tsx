@@ -5,7 +5,6 @@ import { ToastPopUp } from "../../modules/Toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSetGlobalModal } from "../../store/store";
 import { useNavigate } from "react-router-dom";
-import { Room } from "../../hooks/Home/useHome";
 
 type RoomInfo = {
   roomTitle: string;
@@ -31,10 +30,16 @@ export default function CreateRoomForm() {
         message: "잠시 후 다시 시도해주십시오",
       });
     }
+    if (!roomInfo.roomTitle) {
+      return ToastPopUp({
+        type: "error",
+        message: "방 이름을 입력해주세요",
+      });
+    }
 
     const { data } = await supabase.from("rooms").select("*");
     const isParticipants = data?.some((room) =>
-      room.participant?.includes(user?.id)
+      room.participant?.includes(user?.nickname)
     );
 
     // 로그인 유저가 이미 만든 방이 존재한다면 생성 X
@@ -50,7 +55,7 @@ export default function CreateRoomForm() {
       .insert([
         {
           roomTitle: roomInfo.roomTitle,
-          participant: [user?.id],
+          participant: [user?.nickname],
           master: user?.id,
         },
       ])
@@ -69,7 +74,7 @@ export default function CreateRoomForm() {
       message: "게임 생성 완료",
     });
 
-    const { id: roomId } = createdRoom[0] as Room;
+    const { id: roomId } = createdRoom[0];
     // 방 생성 완료되면 해당 룸으로 리다이렉트
     navi(`/game/${roomId}`);
 
