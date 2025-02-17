@@ -12,18 +12,18 @@ export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <div className='relative '>
-      <table className='table-fixed w-full border-1 border-y-slate-600'>
-        <thead className='font-extrabold'>
+    <div className="relative ">
+      <table className="table-fixed w-full border-1 border-y-slate-600">
+        <thead className="font-extrabold">
           <tr>
-            <td className='border-1 border-y-slate-600 text-center py-0.5'>
+            <td className="border-1 border-y-slate-600 text-center py-0.5">
               방 제목
             </td>
-            <td className='border-1 border-y-slate-600 text-center py-0.5'>
+            <td className="border-1 border-y-slate-600 text-center py-0.5">
               참여 인원
             </td>
-            <td className='border-1 border-y-slate-600 text-center py-0.5'>
-              생성 시간
+            <td className="border-1 border-y-slate-600 text-center py-0.5">
+              시작 시간
             </td>
           </tr>
         </thead>
@@ -31,21 +31,23 @@ export default function Home() {
           {roomList?.map((room) => {
             return (
               <tr>
-                <td className='border-1 border-y-slate-600 text-center py-1'>
+                <td className="border-1 border-y-slate-600 text-center py-1">
                   {room?.roomTitle}
                 </td>
-                <td className='border-1 border-y-slate-600 text-center py-1'>
+                <td className="border-1 border-y-slate-600 text-center py-1">
                   {room?.participant?.length || 0} 명
                 </td>
-                <td className='border-1 border-y-slate-600 text-center py-1'>
-                  {`${room?.startAt?.split("T")[0]} - ${String(
-                    room?.startAt?.split("T")[1],
-                  ).slice(0, 8)}`}
+                <td className="border-1 border-y-slate-600 text-center py-1">
+                  {room.startAt
+                    ? `${room?.startAt?.split("T")[0]} - ${String(
+                        room?.startAt?.split("T")[1]
+                      ).slice(0, 8)}`
+                    : "시작 안 함"}
                 </td>
                 {/* 지현추가 시작*/}
-                <td className='border-1 border-y-slate-600 text-center py-1'>
+                <td className="border-1 border-y-slate-600 text-center py-1">
                   <button
-                    className='cursor-pointer bg-blue-500 text-white px-2 py-1 rounded-sm'
+                    className="cursor-pointer bg-blue-500 text-white px-2 py-1 rounded-sm"
                     onClick={() => {
                       setModal(<InviteRoomModal roomId={room.id} />);
                     }}>
@@ -62,14 +64,14 @@ export default function Home() {
         onClick={() => {
           setModal(<CreateRoomForm />);
         }}
-        className='min-w-[9rem] py-1 rounded-[.6rem] bg-amber-500 text-slate-50 cursor-pointer hover:bg-amber-700 hover:text-amber-300 fixed bottom-3.5 left-3.5'>
+        className="min-w-[9rem] py-1 rounded-[.6rem] bg-amber-500 text-slate-50 cursor-pointer hover:bg-amber-700 hover:text-amber-300 fixed bottom-3.5 left-3.5">
         방 만들기
       </button>
       <button
         onClick={() => {
           setModal(<InviteRoomModal />);
         }}
-        className='min-w-[9rem] py-1 rounded-[.6rem] bg-amber-500 text-slate-50 cursor-pointer hover:bg-amber-700 hover:text-amber-300 fixed bottom-3.5 left-45'>
+        className="min-w-[9rem] py-1 rounded-[.6rem] bg-amber-500 text-slate-50 cursor-pointer hover:bg-amber-700 hover:text-amber-300 fixed bottom-3.5 left-45">
         초대코드 입력
       </button>
     </div>
