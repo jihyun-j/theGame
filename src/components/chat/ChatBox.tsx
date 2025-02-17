@@ -10,6 +10,25 @@ interface ChatboxProps {
 
 const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
   const [messages, setMessages] = useState<Chat[]>([]);
+  const [usersMap, setUsersMap] = useState<{ [key: string]: string }>({});
+
+  // 유저의 정보 가져오기
+  const getUserInfo = async () => {
+    const { data: users, error } = await supabase
+      .from("users")
+      .select("id, nickname");
+
+    if (error) {
+      console.log("User fetching error");
+    }
+
+    const userObj = users?.reduce((acc, user) => {
+      acc[user.id] = user.nickname;
+      return acc;
+    }, {} as { [key: string]: string });
+
+    if (userObj) setUsersMap(userObj);
+  };
 
   // 방에 입장 했을 때, 메세지 가져오기
   const fetchMessage = async () => {
@@ -54,6 +73,7 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
 
   useEffect(() => {
     fetchMessage();
+    getUserInfo();
 
     const subscription = supabase
       .channel(`game-room-${roomId}`)
@@ -67,7 +87,7 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
         },
         (payload) => {
           setMessages(payload.new.chats || []);
-        },
+        }
       )
       .subscribe();
 
@@ -77,11 +97,15 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
   }, [roomId]);
 
   return (
-    <div className='grid grid-rows-3 w-3xs h-96 m-4 border rounded-sm p-3'>
-      <p>Room Name</p>
-      <div className='overflow-scroll'>
+    <div className="bg-gray-400 flex flex-col w-3xs h-96 m-4 border rounded-sm p-3">
+      <p className="border-2">Messages</p>
+      <div className="overflow-scroll border-2">
         {messages.map((message, index) => (
-          <p key={index}>{message.msg}</p>
+          <div>
+            <span className="text-amber-500">{usersMap[message.who]}</span>
+            <span className="text-blue-800">{message.createdAt}</span>
+            <p key={index}>{message.msg}</p>
+          </div>
         ))}
       </div>
       <div>
