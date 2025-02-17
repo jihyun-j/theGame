@@ -9,7 +9,7 @@ interface ChatboxProps {
 }
 
 const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
-  const { room } = useRoom();
+  const { room, updateRoom } = useRoom();
   const messages = room?.chats as Chat[];
 
   // 메세지 보내기
@@ -34,10 +34,7 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
 
     const updatedChats = getNextChat(prevChats, newMessage);
 
-    await supabase
-      .from("rooms")
-      .update({ chats: updatedChats })
-      .eq("id", roomId);
+    updateRoom({ chats: updatedChats });
   };
 
   return (
