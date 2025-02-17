@@ -1,30 +1,21 @@
-import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
 import { getNextChat } from "../../modules/Chat/chat";
+import useRoom from "../../store/room.store";
 import { Chat } from "../../types/types";
 import ChatInput from "./ChatInput";
-import { useNavigate, useParams } from "react-router-dom";
-import { ToastPopUp } from "../../modules/Toast";
+import { useEffect, useState } from "react";
 
 interface ChatboxProps {
   roomId: number;
 }
 
 const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
-  const [messages, setMessages] = useState<Chat[]>([]);
+  const navi = useNavigate();
+  const { room } = useRoom();
+  const messages = room?.chats as Chat[];
 
-  // 방에 입장 했을 때, 메세지 가져오기
-  const fetchMessage = async () => {
-    const { data, error } = await supabase
-      .from("rooms")
-      .select("chats")
-      .eq("id", roomId)
-      .single();
-
-    if (!error && data.chats) {
-      setMessages((data.chats as Chat[]) || []);
-    }
-  };
+  const [isRoomDeleted, setIsRoomDeleted] = useState<boolean>(false);
 
   // 메세지 보내기
   const sendMessageHandler = async (text: string, userId: string) => {
@@ -55,67 +46,38 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
   };
 
   useEffect(() => {
-    fetchMessage();
-
-    const subscription = supabase
-      .channel(`game-room-${roomId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "rooms",
-          filter: `id=eq.${roomId}`,
-        },
-        (payload) => {
-          setMessages([payload.new.chats || []]);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(subscription);
-    };
-  }, [roomId]);
-
-  const navi = useNavigate();
-
-  const [isRoomDeleted, setIsRoomDeleted] = useState<boolean>(false);
-
-  const { id } = useParams();
-
-  useEffect(() => {
     supabase
-      .channel(`game-room-${id}`)
+      .channel(`game-room-${roomId}`)
       .on(
         "postgres_changes",
         {
           event: "DELETE",
           schema: "public",
           table: "rooms",
-          filter: `id=eq.${id}`,
+          filter: `id=eq.${roomId}`,
         },
         () => {
           setIsRoomDeleted(true);
-          setMessages([
-            {
-              who: "봇",
-              msg: `방장이 퇴장하여
-              3초 뒤 로비로 이동합니다.`,
-              createdAt: new Date().toISOString(),
-            },
-          ]);
         }
       )
       .subscribe();
   });
 
+  //TODO : 방장 퇴장 시 ChatBox에 방폭 알림 띄우기
   useEffect(() => {
     if (isRoomDeleted) {
-      ToastPopUp({
-        type: "action",
-        message: "방장이 퇴장하여 3초 후 방이 사라집니다.",
-      });
+      supabase
+        .from("rooms")
+        .update({
+          chats: [
+            {
+              who: "봇",
+              msg: "방폭됩니다.",
+              createdAt: new Date().toISOString(),
+            },
+          ],
+        })
+        .eq("id", roomId);
 
       setTimeout(() => {
         navi("/");
@@ -127,7 +89,7 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
     <div className="grid grid-rows-3 w-3xs h-96 m-4 border rounded-sm p-3">
       <p>Room Name</p>
       <div className="overflow-scroll">
-        {messages.map((message, index) => (
+        {messages?.map((message, index) => (
           <p key={index}>{message.msg}</p>
         ))}
       </div>

@@ -1,3 +1,4 @@
+import type { Database } from "./supabase";
 export type User = {
   id: string;
   nickname: string;
@@ -5,14 +6,7 @@ export type User = {
   room?: number | null;
 };
 
-export type Room = {
-  id: number;
-  gameState?: GameState;
-  updatedAt: string;
-  startAt?: string;
-  chats?: Chat[];
-  master?: string;
-};
+export type Room = Database["public"]["Tables"]["rooms"]["Row"];
 
 export type GameState = {
   board: number[];

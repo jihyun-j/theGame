@@ -1,16 +1,14 @@
-import { useParams } from "react-router-dom";
-import useRoom from "../../hooks/game/useRoom";
+import useGame from "../../hooks/game/useGame";
 
 const GameParticipantList = () => {
-  const { id } = useParams();
-  const { participantNicknames } = useRoom(Number(id!));
+  const { participants } = useGame();
 
   return (
     <article className='w-50 h-auto border-2 border-black p-5'>
       <h1>참가자 목록</h1>
       <div className='w-full h-2 border-t-2 border-black' />
       <ul>
-        {participantNicknames?.map((v) => (
+        {participants?.map((v) => (
           <li>{v}</li>
         ))}
       </ul>
