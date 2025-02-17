@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "../../api/supabase";
 import { getNextChat } from "../../modules/Chat/chat";
 import { Chat } from "../../types/types";
@@ -11,7 +11,7 @@ interface ChatboxProps {
 const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
   const [messages, setMessages] = useState<Chat[]>([]);
   const [usersMap, setUsersMap] = useState<{ [key: string]: string }>({});
-
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   // 유저의 정보 가져오기
   const getUserInfo = async () => {
     const { data: users, error } = await supabase
@@ -96,6 +96,7 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
     };
   }, [roomId]);
 
+  // 시간 포맷
   const formattedTime = (time: string) => {
     return new Date(time).toLocaleTimeString("kr-KR", {
       hour: "2-digit",
@@ -103,6 +104,12 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
       hour12: true,
     });
   };
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
   return (
     <div className="bg-gray-400 flex flex-col w-3xs h-96 m-4 border rounded-sm p-3">
       <p className="border-2">Messages</p>
@@ -116,6 +123,7 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
             <p key={index}>{message.msg}</p>
           </div>
         ))}
+        <div ref={messagesEndRef}></div>
       </div>
       <div>
         <ChatInput sendMessage={sendMessageHandler} />
