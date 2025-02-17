@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "../../api/supabase";
 import { getNextChat } from "../../modules/Chat/chat";
 import useRoom from "../../store/room.store";
@@ -11,6 +12,26 @@ interface ChatboxProps {
 const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
   const { room, updateRoom } = useRoom();
   const messages = room?.chats as Chat[];
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [userMap, setUserMap] = useState<{ [key: string]: string }>({});
+
+  const getUserInfo = async () => {
+    const { data: users, error } = await supabase
+      .from("users")
+      .select("id, nickname");
+
+    if (error) {
+      console.log("유저 정보를 가져올 수 없습니다.");
+      return;
+    }
+
+    const userObj = users.reduce((acc, user) => {
+      acc[user.id] = user.nickname;
+      return acc;
+    }, {} as { [key: string]: string });
+
+    if (userObj) setUserMap(userObj);
+  };
 
   // 메세지 보내기
   const sendMessageHandler = async (text: string, userId: string) => {
@@ -37,13 +58,39 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
     updateRoom({ chats: updatedChats });
   };
 
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
+  // 날짜 형식
+  const formatTime = (isoString: string) => {
+    return new Date(isoString).toLocaleTimeString("ko-KR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
   return (
-    <div className='grid grid-rows-3 w-3xs h-96 m-4 border rounded-sm p-3'>
+    <div className="flex flex-col w-3xs h-96 m-4 border rounded-sm p-3">
       <p>Room Name</p>
-      <div className='overflow-scroll'>
+      <div className="overflow-scroll flex-1">
         {messages?.map((message, index) => (
-          <p key={index}>{message.msg}</p>
+          <div key={message.createdAt}>
+            <div className="text-sm font-semibold">
+              <span className="mr-2">{formatTime(message.createdAt)}</span>
+              <span>{userMap[message.who]}</span>
+            </div>
+            <p key={index}>{message.msg}</p>
+          </div>
         ))}
+        <div ref={messagesEndRef}></div>
       </div>
       <div>
         <ChatInput sendMessage={sendMessageHandler} />
