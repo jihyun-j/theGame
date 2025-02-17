@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { supabase } from "../../api/supabase";
 import { getNextChat } from "../../modules/Chat/chat";
 import { Database } from "../../types/supabase";
-import { User } from "../../types/types";
+import { Chat, User } from "../../types/types";
 import { ToastPopUp } from "../../modules/Toast";
 
 export type MutationHandler = {

@@ -54,24 +54,28 @@ const ChatBox: React.FC<ChatboxProps> = ({ roomId }) => {
           filter: `id=eq.${roomId}`,
         },
         () => {
+          const deleteNotice: Chat[] = [
+            {
+              createdAt: new Date().toISOString(),
+              msg: "방폭됩니다.",
+              who: "봇",
+            },
+          ];
+          updateRoom({ chats: deleteNotice });
+
           setIsRoomDeleted(true);
-          updateRoom({
-            chats: [
-              {
-                who: "봇",
-                msg: "방폭됩니다.",
-                createdAt: new Date().toISOString(),
-              },
-            ],
-          });
         }
       )
       .subscribe();
   });
 
-  //TODO : 방장 퇴장 시 ChatBox에 방폭 알림 띄우기
+  //!TODO : 방장 퇴장 시 ChatBox에 방폭 알림 띄우기
   useEffect(() => {
     if (isRoomDeleted) {
+      const deleteNotice: Chat[] = [
+        { createdAt: new Date().toISOString(), msg: "방폭됩니다.", who: "봇" },
+      ];
+      updateRoom({ chats: deleteNotice });
       setTimeout(() => {
         navi("/");
       }, 3000);
