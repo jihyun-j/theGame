@@ -39,6 +39,13 @@ export default function InviteRoomModal({ roomId }: { roomId?: number }) {
       });
     }
 
+    if (data && data.startAt !== null) {
+      return ToastPopUp({
+        type: "info",
+        message: "게임이 진행 중인 방에 입장할 수 없습니다.",
+      });
+    }
+
     if (data && Number(data?.participant?.length) > 5) {
       return ToastPopUp({
         type: "info",
@@ -69,20 +76,20 @@ export default function InviteRoomModal({ roomId }: { roomId?: number }) {
     <React.Fragment>
       <form
         onSubmit={(e) => e.preventDefault()}
-        className=' min-w-[24rem] max-w-[36rem] border-2 border-amber-600 h-[15rem] rounded-[1rem] bg-[#ebebeb90] flex flex-col items-center justify-center gap-4'>
-        <h1 className='font-bold text-2xl'>
+        className=" min-w-[24rem] max-w-[36rem] border-2 border-amber-600 h-[15rem] rounded-[1rem] bg-[#ebebeb90] flex flex-col items-center justify-center gap-4">
+        <h1 className="font-bold text-2xl">
           {roomId ? "입장하기" : "초대코드 입력"}
         </h1>
         {!roomId && (
           <React.Fragment>
-            <div className='flex items-center gap-3'>
-              <label className='w-[5rem]' htmlFor='roomTitle'>
+            <div className="flex items-center gap-3">
+              <label className="w-[5rem]" htmlFor="roomTitle">
                 초대 코드:
               </label>
               <input
-                type='text'
-                id='roomTitle'
-                className='bg-[#fff] rounded-[.4rem] px-2'
+                type="text"
+                id="roomTitle"
+                className="bg-[#fff] rounded-[.4rem] px-2"
                 onChange={(e) => {
                   const { value } = e.target;
                   handleRoomInfoChange(value);
@@ -93,7 +100,7 @@ export default function InviteRoomModal({ roomId }: { roomId?: number }) {
         )}
 
         <button
-          className='w-full text-black max-w-[18rem] rounded-[.2rem] bg-amber-100 py-1 hover:bg-amber-700 hover:text-amber-50 cursor-pointer'
+          className="w-full text-black max-w-[18rem] rounded-[.2rem] bg-amber-100 py-1 hover:bg-amber-700 hover:text-amber-50 cursor-pointer"
           onClick={() => {
             findAndEnter();
           }}>

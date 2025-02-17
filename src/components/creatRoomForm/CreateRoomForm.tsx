@@ -25,9 +25,16 @@ export default function CreateRoomForm() {
   };
 
   const createRoom = async () => {
+    if (!user?.id) {
+      return ToastPopUp({
+        type: "error",
+        message: "잠시 후 다시 시도해주십시오",
+      });
+    }
+
     const { data } = await supabase.from("rooms").select("*");
     const isParticipants = data?.some((room) =>
-      room.participant.includes(user?.id)
+      room.participant?.includes(user?.id)
     );
 
     // 로그인 유저가 이미 만든 방이 존재한다면 생성 X
@@ -38,12 +45,18 @@ export default function CreateRoomForm() {
       });
     }
 
-    // 에러 발생 시 생성 X
     const { data: createdRoom, error } = await supabase
       .from("rooms")
-      .insert([{ roomTitle: roomInfo.roomTitle, participant: [user?.id] }])
+      .insert([
+        {
+          roomTitle: roomInfo.roomTitle,
+          participant: [user?.id],
+          master: user?.id,
+        },
+      ])
       .select();
 
+    // 에러 발생 시 생성 X
     if (error) {
       return ToastPopUp({
         type: "error",
