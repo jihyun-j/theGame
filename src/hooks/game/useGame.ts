@@ -4,8 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getCurPlayer, initGame, play, turnEnd } from "../../modules/Game";
 import { getError } from "../../modules/Game/error";
 import { ToastPopUp } from "../../modules/Toast";
+import useRoom from "../../store/room.store";
 import useGameQuery from "./useGameQuery";
-import useRoom from "./useRoom";
 
 const useGame = () => {
   const { id } = useParams();
@@ -13,11 +13,12 @@ const useGame = () => {
   const [dropCard, setDropCard] = useState(-1);
   const [dropBoardIdx, setDropIdx] = useState(-1);
 
+  const { room, updateRoom } = useRoom();
+  const navigate = useNavigate();
   const { gameState, updateGameState, isLoading, getGameStateError } =
     useGameQuery(roomId);
 
-  const { participantNicknames } = useRoom(roomId);
-  const navigate = useNavigate();
+  const participants = room?.participant;
 
   if (getGameStateError) {
     const errMessage = getError(getGameStateError as PostgrestError);
@@ -27,8 +28,9 @@ const useGame = () => {
 
   const currentPlayer = gameState ? getCurPlayer(gameState!) : null;
 
-  const handlePlay = (dropCard: number, dropBoardIdx: number) => {
+  const handlePlay = () => {
     if (dropCard === -1 || dropBoardIdx === -1) return;
+    console.log("handle play", dropCard, dropBoardIdx);
 
     try {
       updateGameState(play(gameState!, Number(dropCard), Number(dropBoardIdx)));
@@ -60,10 +62,10 @@ const useGame = () => {
   const handleStartGame = () => {
     updateGameState(
       initGame(
-        participantNicknames?.map((nickname) => ({ nickname, cards: [] })) ||
-          [],
+        participants?.map((nickname) => ({ nickname, cards: [] })) || [],
       ),
     );
+    updateRoom({ startAt: new Date().toISOString() });
   };
 
   return {
@@ -72,6 +74,7 @@ const useGame = () => {
     gameState,
     dropCard,
     dropBoardIdx,
+    participants,
     handleTurnEnd,
     handleDropCard,
     handleDropIdx,
