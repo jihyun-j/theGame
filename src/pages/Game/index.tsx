@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ChatBox from "../../components/chat/ChatBox";
 import GameParticipantList from "../../components/game/GameParticipants";
@@ -6,7 +5,6 @@ import GameRoom from "../../components/game/GameRoom";
 import useAccessGame from "../../hooks/game/useAccessGame";
 import useRoomChannel from "../../hooks/game/useRoomChannel";
 import { ToastPopUp } from "../../modules/Toast";
-import useRoom from "../../store/room.store";
 
 export default function Game() {
   const navigate = useNavigate();
@@ -18,12 +16,6 @@ export default function Game() {
     navigate("/");
   }
   useRoomChannel(id!);
-
-  const { room: rooms } = useRoom();
-
-  useEffect(() => {
-    console.log("call rooms", rooms);
-  }, [rooms]);
 
   return (
     <div>
