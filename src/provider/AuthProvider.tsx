@@ -5,13 +5,6 @@ import Login from "../components/auth";
 import { ToastPopUp } from "../modules/Toast";
 import { useAuthStore } from "../store/store";
 
-type User = {
-  id: string | null;
-  nickname: string;
-  password: string;
-  room?: number | null;
-};
-
 interface AuthProviderType {
   user: User | null;
   signUp: () => Promise<unknown>;
