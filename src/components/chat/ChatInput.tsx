@@ -104,7 +104,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ sendMessage }) => {
   };
 
   return (
-    <form action="" onSubmit={submitHandler}>
+    <form onSubmit={submitHandler} className="flex border-2">
       <input
         type="text"
         value={text}
