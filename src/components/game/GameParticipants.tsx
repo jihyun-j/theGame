@@ -9,7 +9,7 @@ const GameParticipantList = () => {
       <div className='w-full h-2 border-t-2 border-black' />
       <ul>
         {participants?.map((v) => (
-          <li>{v}</li>
+          <li key={v}>{v}</li>
         ))}
       </ul>
     </article>

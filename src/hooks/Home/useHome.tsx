@@ -29,6 +29,7 @@ export default function useHome() {
 
   // 내가 참여하고 있는 방 확인
   const getRoom = async () => {
+    // TODO: 나중에 user name으로 바꿔야 함
     const userId = user?.id;
     if (!userId) return Promise.reject(null);
 
