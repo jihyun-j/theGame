@@ -39,18 +39,15 @@ export default function useHome() {
       .contains("participant", [userId])
       .single();
 
-    console.log("get Room", data);
     if (error) return Promise.reject(error);
 
     return data;
   };
 
   useEffect(() => {
-    getRoom()
-      .then((res) => {
-        navigate(`/game/${res.id}`);
-      })
-      .catch(() => console.log("not found"));
+    getRoom().then((res) => {
+      navigate(`/game/${res.id}`);
+    });
   }, []);
 
   return { data, getRooms, getRoom };
