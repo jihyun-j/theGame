@@ -1,8 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
 import { ToastPopUp } from "../../modules/Toast";
+import { useAuth } from "../../provider/AuthProvider";
 
 export default function useHome() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   // 수파베이스에서 방 목록 가져오깅
   const getRooms = async () => {
     const { data, error } = await supabase.from("rooms").select("*");
@@ -22,5 +27,28 @@ export default function useHome() {
     },
   });
 
-  return { data, getRooms };
+  // 내가 참여하고 있는 방 확인
+  const getRoom = async () => {
+    // TODO: 나중에 user name으로 바꿔야 함
+    const userId = user?.id;
+    if (!userId) return Promise.reject(null);
+
+    const { data, error } = await supabase
+      .from("rooms")
+      .select()
+      .contains("participant", [userId])
+      .single();
+
+    if (error) return Promise.reject(error);
+
+    return data;
+  };
+
+  useEffect(() => {
+    getRoom().then((res) => {
+      navigate(`/game/${res.id}`);
+    });
+  }, []);
+
+  return { data, getRooms, getRoom };
 }
