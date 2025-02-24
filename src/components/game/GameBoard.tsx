@@ -1,14 +1,30 @@
-import { DndContext } from "@dnd-kit/core";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import useGame from "../../hooks/game/useGame";
 import GameBoardDummy from "./GameBoardDummy";
 import DragCard from "./card/DragCard";
 
 const GameBoard = () => {
-  const { currentPlayer, dropBoardIdx, dropCard } = useGame();
+  const { currentPlayer, dropBoardIdx, dropCard, handlePlay } = useGame();
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { over, active } = event;
+    const overId = over?.id as string;
+    const activeId = active.id as string;
+    if (over && overId.includes("droppable")) {
+      // active.id는 "cardNumber-<숫자>" 형태로 가정합니다.
+      const cardNumberStr = activeId.split("-")[1];
+      const cardNumber = Number(cardNumberStr);
+      const dropIdx = Number(overId.split("-")[1]);
+
+      handlePlay(cardNumber, dropIdx);
+    } else {
+      console.log("Dropped outside a droppable target");
+    }
+  };
 
   return (
     <div className='inset-0 absolute'>
-      <DndContext>
+      <DndContext onDragEnd={handleDragEnd}>
         <div>
           <h2>카드 목록</h2>
           <h2>player name: {currentPlayer?.nickname}</h2>

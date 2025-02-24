@@ -9,20 +9,19 @@ type Props = {
 
 const DropCard = ({ idx, cardNumber }: Props) => {
   const { setNodeRef } = useDroppable({
-    id: "droppable",
+    id: `droppable-${idx}`,
   });
 
   const { handleDropIdx } = useGame();
 
   return (
-    <div ref={setNodeRef}>
-      <li
-        className={cardClass}
-        onClick={handleDropIdx(idx)}
-        key={`board-${cardNumber + idx}`}>
-        {cardNumber}
-      </li>
-    </div>
+    <li
+      ref={setNodeRef}
+      className={cardClass}
+      onClick={handleDropIdx(idx)}
+      key={`board-${cardNumber + idx}`}>
+      {cardNumber}
+    </li>
   );
 };
 
