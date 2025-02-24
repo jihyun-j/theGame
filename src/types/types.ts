@@ -1,7 +1,9 @@
 import type { Database } from "./supabase";
 export type User = {
+  id: string;
   nickname: string;
-  room?: number;
+  password: string;
+  room?: number | null;
 };
 
 export type Room = Database["public"]["Tables"]["rooms"]["Row"];

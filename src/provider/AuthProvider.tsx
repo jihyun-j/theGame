@@ -4,6 +4,7 @@ import { supabase } from "../api/supabase";
 import Login from "../components/auth";
 import { ToastPopUp } from "../modules/Toast";
 import { useAuthStore } from "../store/store";
+import { User } from "../types/types";
 
 interface AuthProviderType {
   user: User | null;
@@ -15,13 +16,6 @@ interface AuthProviderType {
 }
 
 const AuthContext = createContext<AuthProviderType | undefined>(undefined);
-
-export type User = {
-  id: string;
-  nickname: string;
-  password: string;
-  room?: number | null;
-};
 
 type Props = {
   children: React.ReactNode;

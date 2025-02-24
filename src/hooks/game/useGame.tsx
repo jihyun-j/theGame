@@ -82,9 +82,7 @@ export const GameProvider = ({ children }: Props) => {
 
   const handleStartGame = () => {
     updateGameState(
-      initGame(
-        participants?.map((nickname) => ({ nickname, cards: [] })) || [],
-      ),
+      initGame(participants?.map((nickname) => ({ nickname, cards: [] })) || [])
     );
     updateRoom({ startAt: new Date().toISOString() });
   };
