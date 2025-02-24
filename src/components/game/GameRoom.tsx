@@ -7,7 +7,7 @@ const GameRoom = () => {
   const { isLoading, gameState } = useGame();
 
   return (
-    <div>
+    <div className='absolute inset-0 p-15 flex justify-center items-center'>
       {isLoading && <div>Loading</div>}
       {gameState === null && <NoGameState />}
       {gameState && <GameBoard />}

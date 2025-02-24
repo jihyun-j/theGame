@@ -20,7 +20,7 @@ export default function Game() {
 
   return (
     <GameProvider>
-      <div>
+      <div className='h-full'>
         <button
           id={room ? String(room?.share_uuid) : ""}
           onClick={handleShare}

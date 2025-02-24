@@ -7,7 +7,7 @@ const GameButtonWrapper = () => {
   const showStartBtn = gameState === null;
 
   return (
-    <div>
+    <div className='absolute bottom-2.5 right-2.5'>
       {gameState && (
         <>
           <button onClick={handlePlay}>제출</button>
