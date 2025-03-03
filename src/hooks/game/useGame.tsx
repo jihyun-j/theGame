@@ -19,7 +19,7 @@ type GameContextType = {
   handleDropCard: (card: number) => () => void;
   handleDropIdx: (idx: number) => () => void;
   handleStartGame: () => void;
-  handlePlay: () => void;
+  handlePlay: (cardNumber: number, dropIdx: number) => void;
 };
 
 type Props = {
@@ -49,7 +49,7 @@ export const GameProvider = ({ children }: Props) => {
 
   const currentPlayer = gameState ? getCurPlayer(gameState!) : null;
 
-  const handlePlay = () => {
+  const handlePlay = (dropCard: number, dropBoardIdx: number) => {
     console.log("handle play", dropCard, dropBoardIdx);
     if (dropCard === -1 || dropBoardIdx === -1) return;
 
@@ -82,7 +82,9 @@ export const GameProvider = ({ children }: Props) => {
 
   const handleStartGame = () => {
     updateGameState(
-      initGame(participants?.map((nickname) => ({ nickname, cards: [] })) || [])
+      initGame(
+        participants?.map((nickname) => ({ nickname, cards: [] })) || [],
+      ),
     );
     updateRoom({ startAt: new Date().toISOString() });
   };
